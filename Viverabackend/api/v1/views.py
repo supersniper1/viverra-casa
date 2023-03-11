@@ -1,3 +1,11 @@
-from django.shortcuts import render
+from rest_framework import mixins, status, viewsets
+from rest_framework.permissions import AllowAny
 
-# Create your views here.
+from .serializers import TestSerializer
+
+
+class TestView(viewsets.GenericViewSet, mixins.CreateModelMixin):
+    serializer_class = TestSerializer
+    permission_classes = [AllowAny, ]
+
+
