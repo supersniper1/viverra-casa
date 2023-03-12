@@ -14,7 +14,6 @@ class TestConsumer(WebsocketConsumer):
         )
 
     def receive(self, text_data=None, bytes_data=None):
-
         try:
             self.send(
                 text_data=json.dumps(
