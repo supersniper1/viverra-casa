@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
 
+from widgets.models import Widgets
 
 class User(AbstractUser):
     """Base User Model"""
@@ -23,3 +24,20 @@ class User(AbstractUser):
     @property
     def is_authenticated(self):
         return True
+
+
+class Buffer_user_widget(models.Model):
+    """This is Buffer models
+
+    for Buffering high load operations
+    TODO: think About CASCADE method in widget_id field
+    """
+    user_id = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name='buffer_user'
+    )
+    widget_id = models.OneToOneField(
+        Widgets,
+        on_delete = models.CASCADE,
+    )
