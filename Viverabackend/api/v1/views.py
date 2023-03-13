@@ -9,3 +9,4 @@ class TestView(viewsets.GenericViewSet, mixins.CreateModelMixin):
     permission_classes = [AllowAny, ]
 
 
+
