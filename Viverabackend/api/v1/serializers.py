@@ -15,6 +15,7 @@ class TestSerializer(serializers.Serializer):
         fields = ('test', )
 
     def create(self, validated_data):
+        """TODO:add Async"""
         auth = tweepy.Client(
             "AAAAAAAAAAAAAAAAAAAAAP%2FwkgEAAAAApkYn6ZyoXj36VA0Tld5u8YBKsMU%3DWHMqSD6fDrChqzbM266HicH1IuVSsfRWVQbRWuwOUfoZY01vFw")
         user = auth.get_user(username='ElonMusk')
