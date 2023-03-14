@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Widgets(models.Model):
+class WidgetModel(models.Model):
     widget_tag = models.CharField(max_length=100)
     widget_x = models.IntegerField()
     widget_y = models.IntegerField()
@@ -9,13 +9,13 @@ class Widgets(models.Model):
     widget_size_y = models.IntegerField()
 
 
-class WidgetsDiscord(Widgets):
+class WidgetDiscordModel(WidgetModel):
     tracked_server = models.CharField(max_length=100)
 
 
-class WidgetsTwitter(Widgets):
+class WidgetsTwitterModel(WidgetModel):
     tracked_name = models.CharField(max_length=100)
 
 
-class WidgetsNote(Widgets):
+class WidgetsNoteModel(WidgetModel):
     text = models.TextField()

@@ -17,7 +17,8 @@ class TestSerializer(serializers.Serializer):
     def create(self, validated_data):
         """TODO:add Async"""
         auth = tweepy.Client(
-            "AAAAAAAAAAAAAAAAAAAAAP%2FwkgEAAAAApkYn6ZyoXj36VA0Tld5u8YBKsMU%3DWHMqSD6fDrChqzbM266HicH1IuVSsfRWVQbRWuwOUfoZY01vFw")
+            "AAAAAAAAAAAAAAAAAAAAAP%2FwkgEAAAAApkYn6ZyoXj36VA0Tld5u8YBKsMU%3DWHMqSD6fDrChqzbM266HicH1IuVSsfRWVQbRWuwOUfoZY01vFw"
+        )
         user = auth.get_user(username='ElonMusk')
         session = auth.get_users_tweets(user.data.id)
         tweets = session.data
