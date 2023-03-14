@@ -7,6 +7,3 @@ from .serializers import TestSerializer
 class TestView(viewsets.GenericViewSet, mixins.CreateModelMixin):
     serializer_class = TestSerializer
     permission_classes = [AllowAny, ]
-
-
-
