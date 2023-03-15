@@ -21,6 +21,7 @@ const config = {
         host: 'localhost',
         port: 2004,
         hot: true,
+        historyApiFallback: true,
     },
     plugins: [
         new HtmlWebpackPlugin({
