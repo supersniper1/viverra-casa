@@ -1,6 +1,7 @@
 from pprint import pprint
 from rest_framework import serializers
 import tweepy
+from users.models import UserModel
 
 
 class TestSerializer(serializers.Serializer):
@@ -25,3 +26,16 @@ class TestSerializer(serializers.Serializer):
         for tweet in tweets:
             print(tweet.id, tweet.text)
         return validated_data
+
+
+class AuthenticationSerializer(serializers.ModelSerializer):
+    """
+    get: discord token
+    return: JWT token
+    description: Create Discord user or authorize
+    """
+    token = serializers.CharField()
+
+    class Meta:
+        model = UserModel
+        fields = ('token', )

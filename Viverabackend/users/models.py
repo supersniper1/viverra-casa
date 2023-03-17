@@ -1,12 +1,15 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
-
 from widgets.models import WidgetModel
+from .manager import UserOAuth2Manager
 
 
 class UserModel(AbstractUser):
     """Base User Model"""
+
+    objects = UserOAuth2Manager()
+
     discord_id = models.IntegerField()
     discord_tag = models.CharField(
         max_length=150,
@@ -30,12 +33,11 @@ class UserModel(AbstractUser):
 class BufferUserWidgetModel(models.Model):
     """This is Buffer models
     for Buffering high load operations
-    TODO: think About CASCADE method in widget_id field
     """
 
     user_id = models.ForeignKey(
         UserModel,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         related_name='buffer_user'
     )
 
