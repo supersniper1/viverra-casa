@@ -1,5 +1,5 @@
 import React, {FunctionComponent} from "react";
-import {useTypedSelector} from "../../hooks/redux.useTypedSelector";
+import {useTypedSelector} from "@hooks/redux.useTypedSelector";
 
 export const Square: FunctionComponent = () => {
 

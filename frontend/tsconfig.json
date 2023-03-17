@@ -7,9 +7,16 @@
     "module": "es6",
     "target": "es5",
     "allowJs": true,
-    "typeRoots": [
-      "node_modules/@types"
-    ]
+    "typeRoots": ["node_modules/@types"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@components/*": ["./src/components/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@store/*": ["./src/store/*"],
+      "@views/*": ["./src/views/*"]
+    }
   },
   "files": ["src/index.tsx"]
 }
