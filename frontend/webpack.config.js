@@ -52,7 +52,15 @@ const config = {
         ],
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.jsx', '.js', '...'],
+        alias: {
+            "@": path.resolve(__dirname, "src"),
+            "@assets": path.resolve(__dirname, "src/assets/"),
+            "@components": path.resolve(__dirname, "src/components/"),
+            "@hooks": path.resolve(__dirname, "src/hooks/"),
+            "@store": path.resolve(__dirname, "src/store/"),
+            "@views": path.resolve(__dirname, "src/views/"),
+        },
+        extensions: [".tsx", ".ts", ".jsx", ".js", ".scss", "..."],
     },
 };
 

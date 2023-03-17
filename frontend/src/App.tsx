@@ -1,8 +1,8 @@
 import React, {FunctionComponent} from "react";
 import { Provider } from "react-redux";
-import { store } from './store/store';
+import { store } from '@store/store';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import { View } from "./views/export.views";
+import { View } from "@views/export.views";
 
 const AppRouting: FunctionComponent = () => (
   <BrowserRouter>

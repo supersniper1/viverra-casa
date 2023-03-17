@@ -1,5 +1,5 @@
 import React, {FunctionComponent} from 'react';
-import {useActions} from "../../hooks/redux.useActions";
+import {useActions} from "@hooks/redux.useActions";
 
 export const Buttons: FunctionComponent = () => {
 

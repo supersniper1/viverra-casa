@@ -1,6 +1,6 @@
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
-import { TestActions } from "../store/slices/test/test.slice";
+import { TestActions } from "@store/slices/test/test.slice";
 
 const AllActions = {
   ...TestActions,
