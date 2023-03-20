@@ -1,6 +1,5 @@
-from pprint import pprint
 from rest_framework import serializers
-import tweepy
+
 from users.models import UserModel
 
 

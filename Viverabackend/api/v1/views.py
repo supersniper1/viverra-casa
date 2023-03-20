@@ -1,23 +1,29 @@
 import logging
+import os
 
 import tweepy
+from adrf.decorators import api_view
 from asgiref.sync import sync_to_async
 from django.contrib.auth import login
+from dotenv import load_dotenv
 from rest_framework import status
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from adrf.decorators import api_view
 
+from .auth import AuthenticationBackend, get_user_from_token
 from .serializers import AuthenticationSerializer, TestSerializer
-from .auth import get_user_from_token, AuthenticationBackend
 
 logging.basicConfig(
     filename='main.log',
     filemode='w',
     format='%(asctime)s - %(name)s - %(message)s - %(levelname)s',
 )
+
+load_dotenv()
+
+TWEEPY_TOKEN = str(os.getenv('TWEEPY_TOKEN'))
 
 
 @api_view(['POST'])
@@ -27,10 +33,16 @@ async def async_view_test(request):
     serializer = TestSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     auth = tweepy.Client(
-        "AAAAAAAAAAAAAAAAAAAAAP%2FwkgEAAAAApkYn6ZyoXj36VA0Tld5u8YBKsMU%3DWHMqSD6fDrChqzbM266HicH1IuVSsfRWVQbRWuwOUfoZY01vFw"
+        TWEEPY_TOKEN
     )
-    user = await sync_to_async(auth.get_user)(username=serializer.data.get('username'))
-    session = await sync_to_async(auth.get_users_tweets)(user.data.id)
+    user = await sync_to_async(auth.get_user)(
+        username=serializer.data.get('username')
+    )
+
+    session = await sync_to_async(auth.get_users_tweets)(
+        user.data.id
+    )
+
     tweets = session.data
 
     tweets_dict = []
@@ -66,9 +78,9 @@ async def authentication_view(request):
     try:
         user = await get_user_from_token(token)
 
-        discord_user = await sync_to_async(AuthenticationBackend.authenticate)(request, user=user)
-
-        discord_user = list(discord_user).pop()
+        discord_user = await sync_to_async(AuthenticationBackend.authenticate)(
+            request, user=user
+        )
 
         await sync_to_async(login)(request, discord_user)
         refresh = RefreshToken.for_user(discord_user)
@@ -94,7 +106,10 @@ async def authentication_view(request):
 @permission_classes([IsAuthenticated, ])
 async def discorduser(request):
     """Get current user`s data """
-    discord_user = await sync_to_async(AuthenticationBackend.get_user)(request, discord_id=request.user.discord_id)
+    discord_user = await sync_to_async(AuthenticationBackend.get_user)(
+        request,
+        discord_id=request.user.discord_id
+    )
     response = {
         "discord_tag": discord_user.discord_tag,
         "email": discord_user.email,

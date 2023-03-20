@@ -1,13 +1,12 @@
 import os
 
-from asgiref.sync import async_to_sync, sync_to_async
+import httpx
 from django.contrib.auth.backends import BaseBackend
 from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
 from dotenv import load_dotenv
-from users.models import UserModel
-from channels.db import database_sync_to_async
-import httpx
 
+from users.models import UserModel
 
 load_dotenv()
 
@@ -19,12 +18,13 @@ class AuthenticationBackend(BaseBackend):
     """Discord Authorization Backend
     create a new user if such a user does not exist yet
     """
-    def authenticate(request, user) -> UserModel:
-        find_user = UserModel.objects.filter(discord_id=user['id'])
-        if len(find_user) == 0:
-            new_user = UserModel.objects.create_new_user.user
+    def authenticate(self, user) -> UserModel:
+        try:
+            find_user = get_object_or_404(UserModel, discord_id=user['id'])
+            return find_user
+        except:
+            new_user = UserModel.objects.create_user(user)
             return new_user
-        return find_user
 
     def get_user(self, discord_id):
         try:

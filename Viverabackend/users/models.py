@@ -1,7 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
+
 from widgets.models import WidgetModel
+
 from .manager import UserOAuth2Manager
 
 

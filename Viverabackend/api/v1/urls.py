@@ -1,7 +1,7 @@
-from django.urls import include, path
+from django.urls import path
 from rest_framework import routers
 
-from .views import authentication_view, async_view_test, discorduser
+from .views import async_view_test, authentication_view, discorduser
 
 router_v1 = routers.DefaultRouter()
 
