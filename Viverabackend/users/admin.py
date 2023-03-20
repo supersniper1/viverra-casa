@@ -19,7 +19,8 @@ class UsersAdmin(admin.ModelAdmin):
     def avatar_show(self, obj):
         if obj.avatar:
             return mark_safe(
-                f'<img src="data:image/png;base64,{obj.avatar}" style="height: 80px; width:80px;">'
+                f'<img src="data:image/png;base64,'
+                f'{obj.avatar}" style="height: 80px; width:80px;">'
             )
         return '--пусто--'
 
