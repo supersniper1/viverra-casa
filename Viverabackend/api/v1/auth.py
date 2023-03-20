@@ -1,12 +1,12 @@
 import os
 
-import requests
+from asgiref.sync import async_to_sync, sync_to_async
 from django.contrib.auth.backends import BaseBackend
 from django.core.exceptions import ObjectDoesNotExist
-
 from dotenv import load_dotenv
-
 from users.models import UserModel
+from channels.db import database_sync_to_async
+import httpx
 
 
 load_dotenv()
@@ -22,18 +22,18 @@ class AuthenticationBackend(BaseBackend):
     def authenticate(request, user) -> UserModel:
         find_user = UserModel.objects.filter(discord_id=user['id'])
         if len(find_user) == 0:
-            new_user = UserModel.objects.create_new_user(user)
+            new_user = UserModel.objects.create_new_user.user
             return new_user
         return find_user
 
-    def get_user(self, user_id):
+    def get_user(self, discord_id):
         try:
-            return UserModel.objects.get(discord_id=user_id)
+            return UserModel.objects.get(discord_id=discord_id)
         except ObjectDoesNotExist:
             return None
 
 
-def get_user_from_token(token: str) -> UserModel:
+async def get_user_from_token(token: str) -> UserModel:
     """
     :param token:
     :return: CustomUser:
@@ -44,22 +44,25 @@ def get_user_from_token(token: str) -> UserModel:
         'client_secret': CLIENT_SECRET,
         'grant_type': 'authorization_code',
         'code': token,
-        'redirect_uri': "http://127.0.0.1:8000/api/v1/authenticate/",
+        'redirect_uri': "http://0.0.0.0:2004/",
         'scope': "identify",
     }
     headers = {
         'Content-Type': "application/x-www-form-urlencoded",
     }
-    response = requests.post(
-        'https://discord.com/api/oauth2/token',
-        data=data,
-        headers=headers
-    )
-    credentials = response.json()
-    access_token = credentials['access_token']
 
-    response = requests.get('https://discord.com/api/v9/users/@me', headers={
-        "Authorization": "Bearer %s" % access_token
-    })
-    user = response.json()
-    return user
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        response = await client.post(
+            'https://discord.com/api/oauth2/token',
+            data=data,
+            headers=headers
+        )
+        credentials = response.json()
+        access_token = credentials['access_token']
+
+        response = await client.get(
+                'https://discord.com/api/v9/users/@me',
+                headers={"Authorization": "Bearer %s" % access_token}
+        )
+        user = response.json()
+        return user
