@@ -6,6 +6,6 @@ COPY . .
 
 RUN yarn
 
-CMD ["node", "src/index.ts"]
+CMD ["node", "src/index.tsx"]
 
 EXPOSE 2004
