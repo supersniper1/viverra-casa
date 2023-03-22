@@ -9,7 +9,7 @@ class WidgetModel(models.Model):
     widget_size_y = models.IntegerField()
 
 
-class WidgetDiscordModel(WidgetModel):
+class WidgetsDiscordModel(WidgetModel):
     tracked_server = models.CharField(max_length=100)
 
 

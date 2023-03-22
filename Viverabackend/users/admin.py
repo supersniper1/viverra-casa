@@ -1,3 +1,27 @@
 from django.contrib import admin
+from django.contrib.auth import get_user_model
+from django.utils.safestring import mark_safe
 
-# Register your models here.
+UserModel = get_user_model()
+
+
+@admin.register(UserModel)
+class UsersAdmin(admin.ModelAdmin):
+    readonly_fields = ('avatar_show',)
+    list_display = (
+        'id',
+        'discord_tag',
+        'avatar_show',
+        'last_login',
+        'is_superuser'
+    )
+
+    def avatar_show(self, obj):
+        if obj.avatar:
+            return mark_safe(
+                f'<img src="data:image/png;base64,'
+                f'{obj.avatar}" style="height: 80px; width:80px;">'
+            )
+        return '--пусто--'
+
+    avatar_show.short_description = 'аватар'
