@@ -1,14 +1,4 @@
-FROM node:18-alpine AS app
-
-COPY ./frontend .
-
-RUN yarn
-
-CMD ["yarn", "build:prod"]
-
-EXPOSE 2004
-
-FROM python:3.9 AS app
+FROM python:3.9 AS backend
 
 WORKDIR /app
 

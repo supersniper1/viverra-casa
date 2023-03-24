@@ -9,12 +9,24 @@ services:
     env_file:
       - ./.env
 
-  app:
-    container_name: app
+  frontend:
+    container_name: frontend
     build:
       context: ../
-      dockerfile: Dockerfile
-      target: app
+      dockerfile: frontend/Dockerfile
+    volumes:
+      - :/usr/share/nginx/html/
+
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+
+  backend:
+    container_name: backend
+    build:
+      context: ../
+      dockerfile: Viverabackend/Dockerfile
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
