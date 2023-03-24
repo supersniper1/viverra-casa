@@ -12,10 +12,8 @@ services:
   frontend:
     container_name: frontend
     build:
-      context: ../
-      dockerfile: frontend/Dockerfile
-    volumes:
-      - :/usr/share/nginx/html/
+      context: ../frontend
+      dockerfile: Dockerfile
 
     depends_on:
       - db
@@ -37,16 +35,6 @@ services:
       - db
     env_file:
       - ./.env
-
-  frontend:
-    container_name: frontend
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
-    volumes:
-      - ./frontend/:/app/result_build/
-    depends_on:
-      - db
 
   nginx:
     container_name: nginx
