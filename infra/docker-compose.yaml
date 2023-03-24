@@ -14,6 +14,7 @@ services:
     build:
       context: ../
       dockerfile: Dockerfile
+      target: app
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
