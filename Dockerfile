@@ -12,6 +12,8 @@ CMD ["gunicorn", "Viverabackend.wsgi:application", "--bind", "0:8000" ]
 
 FROM node:18-alpine
 
+RUN npm install -g yarn
+
 RUN yarn
 
 CMD ["yarn", "build:prod"]
