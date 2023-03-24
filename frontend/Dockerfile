@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:18-alpine AS frontend
 
 WORKDIR /app
 
@@ -6,6 +6,4 @@ COPY . .
 
 RUN yarn
 
-CMD ["node", "src/index.tsx"]
-
-EXPOSE 2004
+CMD ["yarn", "build:prod"]

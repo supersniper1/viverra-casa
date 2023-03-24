@@ -9,13 +9,22 @@ services:
     env_file:
       - ./.env
 
+  frontend:
+    container_name: frontend
+    build:
+      context: ../
+      dockerfile: frontend/Dockerfile
+
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+
   backend:
     container_name: backend
     build:
-      context: ../Viverabackend
-      dockerfile: Dockerfile
-
-    restart: always
+      context: ../
+      dockerfile: Viverabackend/Dockerfile
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
@@ -24,16 +33,6 @@ services:
       - db
     env_file:
       - ./.env
-
-  frontend:
-    container_name: frontend
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
-    volumes:
-      - ./frontend/:/app/result_build/
-    depends_on:
-      - db
 
   nginx:
     container_name: nginx
@@ -48,8 +47,7 @@ services:
       - ./frontend/build:/usr/share/nginx/html/
 
     depends_on:
-      - backend
-      - frontend
+      - app
 
 volumes:
   database:
