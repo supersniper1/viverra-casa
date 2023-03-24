@@ -29,7 +29,7 @@ TWEEPY_TOKEN = str(os.getenv('TWEEPY_TOKEN'))
 @api_view(['POST'])
 @permission_classes([AllowAny, ])
 async def async_view_test(request):
-
+    """test twitter tweepy"""
     serializer = TestSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     auth = tweepy.Client(
