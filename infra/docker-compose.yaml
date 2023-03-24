@@ -11,7 +11,7 @@ services:
 
   app:
     container_name: app
-    build: .
+    build: ../
     restart: always
     volumes:
       - static_value:/app/static/
@@ -21,7 +21,6 @@ services:
       - db
     env_file:
       - ./.env
-
 
   nginx:
     container_name: nginx
@@ -36,7 +35,8 @@ services:
       - ./frontend/build:/usr/share/nginx/html/
 
     depends_on:
-      - app
+      - backend
+      - frontend
 
 volumes:
   database:
