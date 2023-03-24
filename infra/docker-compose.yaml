@@ -9,10 +9,9 @@ services:
     env_file:
       - ./.env
 
-  backend:
-    container_name: backend
+  app:
+    container_name: app
     build:
-      context: ../Viverabackend
       dockerfile: Dockerfile
 
     restart: always
@@ -25,15 +24,6 @@ services:
     env_file:
       - ./.env
 
-  frontend:
-    container_name: frontend
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
-    volumes:
-      - ./frontend/:/app/result_build/
-    depends_on:
-      - db
 
   nginx:
     container_name: nginx
