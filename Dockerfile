@@ -12,11 +12,9 @@ CMD ["gunicorn", "Viverabackend.wsgi:application", "--bind", "0:8000" ]
 
 FROM node:18-alpine
 
-WORKDIR /frontend
-
 CMD ['ls', '-a']
 
-COPY . .
+CMD ["cd frontend"]
 
 RUN yarn
 
