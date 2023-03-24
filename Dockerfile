@@ -6,13 +6,15 @@ COPY Viverabackend/requirements.txt .
 
 RUN pip3 install -r requirements.txt --no-cache-dir
 
-COPY ../ .
+COPY . .
 
 CMD ["gunicorn", "Viverabackend.wsgi:application", "--bind", "0:8000" ]
 
 FROM node:18-alpine
 
 WORKDIR /app/frontend
+
+CMD ['ls', '-a']
 
 RUN yarn
 
