@@ -1,4 +1,4 @@
-FROM python:3.9
+FROM python:3.9 AS backend
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ COPY ./Viverabackend .
 
 CMD ["gunicorn", "Viverabackend.wsgi:application", "--bind", "0:8000" ]
 
-FROM node:18-alpine
+FROM node:18-alpine AS frontend
 
 COPY ./frontend .
 
