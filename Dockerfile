@@ -8,8 +8,6 @@ RUN pip3 install -r requirements.txt --no-cache-dir
 
 COPY . .
 
-CMD ['ls', '-a']
-
 CMD ["gunicorn", "Viverabackend.wsgi:application", "--bind", "0:8000" ]
 
 FROM node:18-alpine
@@ -17,6 +15,8 @@ FROM node:18-alpine
 WORKDIR /frontend
 
 CMD ['ls', '-a']
+
+COPY . .
 
 RUN yarn
 
