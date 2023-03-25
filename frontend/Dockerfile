@@ -2,8 +2,10 @@ FROM node:18-alpine AS frontend
 
 WORKDIR /app
 
-COPY . .
+COPY package*.json ./
 
 RUN yarn
+
+COPY . ./
 
 CMD ["yarn", "build:prod"]
