@@ -1,4 +1,4 @@
-FROM python:3.9 AS backend
+FROM python:3.9-slim AS backend
 
 WORKDIR /app
 
@@ -8,4 +8,4 @@ RUN pip3 install -r requirements.txt --no-cache-dir
 
 COPY . .
 
-CMD ["gunicorn", "Viverabackend.wsgi:application", "--bind", "0:8000" ]
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "Viverabackend.asgi:application"]
