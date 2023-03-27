@@ -1,7 +1,6 @@
-from django.urls import re_path
+import socketio
+from .consumers import WebSocketIoNamespace
 
-from . import consumers
+sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*')
 
-websocket_urlpatterns = [
-    re_path(r'socket.io/', consumers.app)
-]
+sio.register_namespace(WebSocketIoNamespace('/ws'))
