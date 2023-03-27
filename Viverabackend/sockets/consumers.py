@@ -1,30 +1,22 @@
-import json
+import socketio
 
-from channels.generic.websocket import WebsocketConsumer
+sio = socketio.AsyncServer(async_mode='asgi')
+app = socketio.ASGIApp(sio)
 
 
-class TestConsumer(WebsocketConsumer):
-    def connect(self):
-        self.accept()
-        self.send(
-            text_data=json.dumps(
-                [
-                    'test connection'
-                ]
-            )
-        )
+class MyCustomNamespace(socketio.AsyncNamespace):
+    async def on_connect(self, sid, environ):
+        await self.send(data="I'm connected!", to=sid)
 
-    def receive(self, text_data=None, bytes_data=None):
-        try:
-            self.send(
-                text_data=json.dumps(
-                    [
-                        'test answer'
-                    ]
-                )
-            )
-        except Exception as ex:
-            print(ex)
-
-    async def disconnect(self, code):
+    async def on_disconnect(self, sid):
         pass
+
+    async def on_post(self, sid, data):
+        await self.send(data='hellow from custom event post', to=sid)
+
+    async def on_message(self, sid,  data):
+        print('message received with ', data)
+        await self.send(data=('my response', {'response': 'my response'}), to=sid)
+
+
+sio.register_namespace(MyCustomNamespace('/test'))

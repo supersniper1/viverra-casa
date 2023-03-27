@@ -25,6 +25,15 @@ export const Main: FunctionComponent = () => {
     socket.on('disconnect', onDisconnect);
     socket.on('foo', onFooEvent);
 
+    socket.on("connect", () => {
+      console.log(socket.id);
+    });
+
+    socket.on("connect_error", (err:any) => {
+      console.log(`connect_error due to ${err.message}`);
+      console.log(`connect_error due to ${err}`);
+    });
+
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
@@ -34,7 +43,7 @@ export const Main: FunctionComponent = () => {
 
   return (
     <div>
-      MainPage
+      MainPage_Test_v9
       <Icons.Login/>
       <Square/>
       <Buttons/>
