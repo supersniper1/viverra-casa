@@ -26,7 +26,7 @@ export const Main: FunctionComponent = () => {
     socket.on('foo', onFooEvent);
 
     socket.on("connect", () => {
-      console.log(socket.id);
+      console.log("socket connected");
     });
 
     socket.on("connect_error", (err:any) => {
