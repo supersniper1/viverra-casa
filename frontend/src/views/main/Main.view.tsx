@@ -12,15 +12,6 @@ export const Main: FunctionComponent = () => {
     socket.on('disconnect', () => {
       console.log('disconected')
     });
-
-    return () => {
-      socket.off('connect', () => {
-        console.log('connected')
-      });
-      socket.off('disconnect', () => {
-        console.log('disconected')
-      });
-    };
   }, []);
 
   return (
