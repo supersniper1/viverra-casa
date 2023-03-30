@@ -7,7 +7,7 @@ from .models import WidgetsDiscordModel, WidgetsTwitterModel, WidgetModel
 @admin.register(WidgetModel)
 class WidgetAdmin(admin.ModelAdmin):
     list_display = (
-        'id',
+        'uuid',
         'widget_tag',
     )
 
@@ -15,7 +15,7 @@ class WidgetAdmin(admin.ModelAdmin):
 @admin.register(WidgetsDiscordModel)
 class WidgetDiscordAdmin(admin.ModelAdmin):
     list_display = (
-        'id',
+        'uuid',
         'widget_tag',
     )
 
@@ -23,6 +23,6 @@ class WidgetDiscordAdmin(admin.ModelAdmin):
 @admin.register(WidgetsTwitterModel)
 class WidgetsTwitterAdmin(admin.ModelAdmin):
     list_display = (
-        'id',
+        'uuid',
         'widget_tag',
     )

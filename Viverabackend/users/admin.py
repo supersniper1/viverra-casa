@@ -9,7 +9,7 @@ UserModel = get_user_model()
 class UsersAdmin(admin.ModelAdmin):
     readonly_fields = ('avatar_show',)
     list_display = (
-        'id',
+        'uuid',
         'discord_tag',
         'avatar_show',
         'last_login',

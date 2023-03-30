@@ -1,7 +1,14 @@
 from django.db import models
+import uuid
 
 
 class WidgetModel(models.Model):
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        primary_key=True,
+        editable=False
+    )
     widget_tag = models.CharField(max_length=100)
     widget_x = models.IntegerField()
     widget_y = models.IntegerField()

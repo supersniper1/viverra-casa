@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
@@ -11,7 +13,12 @@ class UserModel(AbstractUser):
     """Base User Model"""
 
     objects = UserOAuth2Manager()
-
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        primary_key=True,
+        editable=False
+    )
     discord_id = models.IntegerField()
     discord_tag = models.CharField(
         max_length=150,
@@ -36,7 +43,12 @@ class BufferUserWidgetModel(models.Model):
     """This is Buffer models
     for Buffering high load operations
     """
-
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        primary_key=True,
+        editable=False
+    )
     user_id = models.ForeignKey(
         UserModel,
         on_delete=models.CASCADE,
