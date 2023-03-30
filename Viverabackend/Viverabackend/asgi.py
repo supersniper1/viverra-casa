@@ -1,18 +1,10 @@
 import os
 
-from channels.auth import AuthMiddlewareStack
-from channels.routing import ProtocolTypeRouter, URLRouter
+import socketio
 from django.core.asgi import get_asgi_application
-
-from sockets.routing import websocket_urlpatterns
+from sockets.routing import sio
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Viverabackend.settings')
 
-application = ProtocolTypeRouter({
-    "http": get_asgi_application(),
-    "websocket": AuthMiddlewareStack(
-        URLRouter(
-            websocket_urlpatterns
-        )
-    )
-})
+django_app = get_asgi_application()
+application = socketio.ASGIApp(sio, django_app)

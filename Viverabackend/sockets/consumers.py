@@ -1,30 +1,15 @@
-import json
-
-from channels.generic.websocket import WebsocketConsumer
+import socketio
 
 
-class TestConsumer(WebsocketConsumer):
-    def connect(self):
-        self.accept()
-        self.send(
-            text_data=json.dumps(
-                [
-                    'test connection'
-                ]
-            )
-        )
+class WebSocketIoNamespace(socketio.AsyncNamespace):
+    async def on_connect(self, sid, environ):
+        await self.send(data="connected", to=sid)
 
-    def receive(self, text_data=None, bytes_data=None):
-        try:
-            self.send(
-                text_data=json.dumps(
-                    [
-                        'test answer'
-                    ]
-                )
-            )
-        except Exception as ex:
-            print(ex)
+    async def on_disconnect(self, sid):
+        await self.send(data="disconnected", to=sid)
 
-    async def disconnect(self, code):
-        pass
+    async def on_post(self, sid, data):
+        await self.send(data='hello from custom event post', to=sid)
+
+    async def on_message(self, sid,  data):
+        await self.send(data=('my response', {'response': 'my response'}), to=sid)

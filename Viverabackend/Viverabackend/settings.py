@@ -1,4 +1,4 @@
-import os
+﻿import os
 from datetime import timedelta
 from pathlib import Path
 
@@ -31,7 +31,6 @@ INSTALLED_APPS = [
     'api',
     'widgets',
     'users',
-    'sockets'
 ]
 
 MIDDLEWARE = [

@@ -1,7 +1,6 @@
-from django.urls import re_path
+import socketio
+from .consumers import WebSocketIoNamespace
 
-from .consumers import TestConsumer
+sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*')
 
-websocket_urlpatterns = [
-    re_path(r'ws/socket-server/', TestConsumer.as_asgi())
-]
+sio.register_namespace(WebSocketIoNamespace('/widget'))
