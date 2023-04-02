@@ -102,7 +102,9 @@ class WidgetNamespace(socketio.AsyncNamespace):
             obj = await sync_to_async(
                 WidgetModel.objects.get
             )(uuid=widget_uuid)
-            data.append(model_to_dict(obj))
+            obj = model_to_dict(obj)
+            obj['uuid'] = str(widget_uuid)
+            data.append(obj)
         await self.send(data=data, to=sid)
 
     async def on_post_widget(self, sid, data):
@@ -119,6 +121,12 @@ class WidgetNamespace(socketio.AsyncNamespace):
 
     async def on_update_widget(self, sid, data):
         """Update One Widget for current User"""
+        serializer = WidgetSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        uuid = str(data.get('uuid'))
+        data = await sync_to_async(WidgetModel.objects.filter)(uuid=uuid)
+        await sync_to_async(data.update)(**serializer.data)
+        await self.send(data=serializer.data, to=sid)
 
     async def on_delete_widget(self, sid, data):
         """Delete One Widget for current User"""
