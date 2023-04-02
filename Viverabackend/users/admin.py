@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.utils.safestring import mark_safe
+from .models import BufferUserWidgetModel
 
 UserModel = get_user_model()
 
@@ -25,3 +26,13 @@ class UsersAdmin(admin.ModelAdmin):
         return '--пусто--'
 
     avatar_show.short_description = 'аватар'
+
+
+@admin.register(BufferUserWidgetModel)
+class BufferUserWidgetAdmin(admin.ModelAdmin):
+    list_display = (
+        'uuid',
+        'user_uuid',
+        'widget_uuid',
+    )
+
