@@ -8,6 +8,8 @@ from asgiref.sync import sync_to_async
 
 import os
 
+from django.shortcuts import get_object_or_404
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
 import django
@@ -18,7 +20,9 @@ django.setup()
 from .middleware import socket_authentication, create_response
 
 from api.v1.auth import AuthenticationBackend
+from api.v1.serializers import WidgetSerializer
 from users.models import BufferUserWidgetModel, WidgetModel
+from widgets.models import WidgetModel
 
 sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*')
 
@@ -103,11 +107,23 @@ class WidgetNamespace(socketio.AsyncNamespace):
 
     async def on_post_widget(self, sid, data):
         """Create One Widget for current User"""
-
-        await self.send(data=("dasdasd", "sdasd"), to=sid)
+        serializer = WidgetSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        data = await sync_to_async(WidgetModel.objects.create)(
+            **serializer.data
+        )
+        uuid = str(data.uuid)
+        data = model_to_dict(data)
+        data['uuid'] = uuid
+        await self.send(data=data, to=sid)
 
     async def on_update_widget(self, sid, data):
         """Update One Widget for current User"""
 
     async def on_delete_widget(self, sid, data):
         """Delete One Widget for current User"""
+        uuid = str(data.get('uuid'))
+        data = await sync_to_async(WidgetModel.objects.get)(uuid=uuid)
+        await sync_to_async(data.delete)()
+        response = "widget was successfully deleted"
+        await self.send(data=response, to=sid)
