@@ -19,6 +19,10 @@ class UserModel(AbstractUser):
         primary_key=True,
         editable=False
     )
+    email = models.EmailField(
+        null=True,
+        blank=True
+    )
     discord_id = models.IntegerField()
     discord_tag = models.CharField(
         max_length=150,
