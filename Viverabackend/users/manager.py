@@ -20,13 +20,13 @@ def get_user_avatar_base64(user) -> str:
 
 class UserOAuth2Manager(models.UserManager):
     def create_user(self, user):
-        discord_tag = '%s#%s' % (user['username'], user['discriminator'])
+        discord_tag = '%s#%s' % (user.get('username'), user.get('discriminator'))
         new_user = self.create(
-            username=user['username'],
-            discord_id=user['id'],
+            username=user.get('username'),
+            discord_id=user.get('id'),
             avatar=get_user_avatar_base64(user),
             discord_tag=discord_tag,
-            email=user['email'] or None,
+            email=user.get('email') or None,
             is_superuser=False,
             is_staff=False,
             is_active=True,

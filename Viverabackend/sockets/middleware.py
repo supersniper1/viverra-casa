@@ -9,9 +9,11 @@ from django.shortcuts import get_object_or_404
 
 from Viverabackend import settings
 import os
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
 import django
+
 django.setup()
 
 UserModel = get_user_model()
