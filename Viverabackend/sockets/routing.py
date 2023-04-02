@@ -1,6 +1,4 @@
-import socketio
-from .consumers import WebSocketIoNamespace
+from .consumers import WidgetNamespace
+from .consumers import sio
 
-sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*')
-
-sio.register_namespace(WebSocketIoNamespace('/widget'))
+sio.register_namespace(WidgetNamespace('/widget'))

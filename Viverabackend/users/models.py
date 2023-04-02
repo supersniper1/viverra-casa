@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
@@ -11,14 +13,18 @@ class UserModel(AbstractUser):
     """Base User Model"""
 
     objects = UserOAuth2Manager()
-
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        primary_key=True,
+        editable=False
+    )
     discord_id = models.IntegerField()
     discord_tag = models.CharField(
         max_length=150,
         verbose_name='Ник В дискорде',
         unique=False,
         validators=[RegexValidator(
-            regex=r'^[\w.@+-]+$',
             message='Имя пользователя содержит недопустимый символ'
         )]
     )
@@ -36,14 +42,20 @@ class BufferUserWidgetModel(models.Model):
     """This is Buffer models
     for Buffering high load operations
     """
-
-    user_id = models.ForeignKey(
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        primary_key=True,
+        editable=False
+    )
+    user_uuid = models.ForeignKey(
         UserModel,
         on_delete=models.CASCADE,
         related_name='buffer_user'
     )
 
-    widget_id = models.OneToOneField(
+    widget_uuid = models.OneToOneField(
         WidgetModel,
         on_delete=models.CASCADE,
+        related_name='buffer_widget'
     )

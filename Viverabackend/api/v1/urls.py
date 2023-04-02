@@ -12,5 +12,5 @@ urlpatterns = [
 
     path('test/', async_view_test, name='test'),
     path('auth/', authentication_view, name='auth'),
-    path('discorduser/', discorduser, name='test'),
+    path('discorduser/', discorduser, name='discorduser'),
 ]
