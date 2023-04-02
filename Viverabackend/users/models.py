@@ -25,7 +25,6 @@ class UserModel(AbstractUser):
         verbose_name='Ник В дискорде',
         unique=False,
         validators=[RegexValidator(
-            regex=r'^[\w.@+-]+$',
             message='Имя пользователя содержит недопустимый символ'
         )]
     )
@@ -49,13 +48,14 @@ class BufferUserWidgetModel(models.Model):
         primary_key=True,
         editable=False
     )
-    user_id = models.ForeignKey(
+    user_uuid = models.ForeignKey(
         UserModel,
         on_delete=models.CASCADE,
         related_name='buffer_user'
     )
 
-    widget_id = models.OneToOneField(
+    widget_uuid = models.OneToOneField(
         WidgetModel,
         on_delete=models.CASCADE,
+        related_name='buffer_widget'
     )
