@@ -1,8 +1,9 @@
 from rest_framework import serializers
 
 from users.models import UserModel
-from widgets.models import WidgetModel, WidgetsNoteModel, WidgetsTwitterModel
+from widgets.models import WidgetModel, WidgetsNoteModel, WidgetsTwitterModel, WidgetsDiscordModel
 from rest_polymorphic.serializers import PolymorphicSerializer
+
 
 class TestSerializer(serializers.Serializer):
     """
@@ -13,7 +14,7 @@ class TestSerializer(serializers.Serializer):
     username = serializers.CharField()
 
     class Meta:
-        fields = ('username', )
+        fields = ('username',)
 
 
 class AuthenticationSerializer(serializers.ModelSerializer):
@@ -26,7 +27,7 @@ class AuthenticationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserModel
-        fields = ('token', )
+        fields = ('token',)
 
 
 class WidgetSerializer(serializers.ModelSerializer):
@@ -59,6 +60,7 @@ class WidgetsNoteSerializer(serializers.ModelSerializer):
             'text'
         )
 
+
 class WidgetsTwitterSerializer(serializers.ModelSerializer):
     uuid = serializers.ReadOnlyField()
 
@@ -75,33 +77,26 @@ class WidgetsTwitterSerializer(serializers.ModelSerializer):
         )
 
 
-class TestDatabaseSerializer(serializers.Serializer):
-    """
-    get: str
-    return: str
-    description: Test serializer
-    """
-    widget_tag = serializers.CharField()
-    widget_x = serializers.CharField()
-    widget_y = serializers.CharField()
-    widget_size_x = serializers.CharField()
-    widget_size_y = serializers.CharField()
-    text = serializers.CharField(required=False)
-    tracked_name = serializers.CharField(required=False)
+class WidgetsDiscordSerializer(serializers.ModelSerializer):
+    uuid = serializers.ReadOnlyField()
 
     class Meta:
+        model = WidgetsDiscordModel
         fields = (
+            'uuid',
             'widget_tag',
             'widget_x',
             'widget_y',
             'widget_size_x',
             'widget_size_y',
+            'tracked_server'
         )
 
 
 class WidgetsPolymorphicSerializer(PolymorphicSerializer):
-   model_serializer_mapping = {
-       WidgetModel: WidgetSerializer,
-       WidgetsNoteModel: WidgetsNoteSerializer,
-       WidgetsTwitterModel: WidgetsTwitterSerializer
-   }
+    model_serializer_mapping = {
+        WidgetModel: WidgetSerializer,
+        WidgetsNoteModel: WidgetsNoteSerializer,
+        WidgetsTwitterModel: WidgetsTwitterSerializer,
+        WidgetsDiscordModel: WidgetsDiscordSerializer
+    }

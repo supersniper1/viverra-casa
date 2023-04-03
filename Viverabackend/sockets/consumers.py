@@ -10,7 +10,6 @@ import os
 
 from django.shortcuts import get_object_or_404
 
-
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
 import django
@@ -81,7 +80,7 @@ class WidgetNamespace(socketio.AsyncNamespace):
     async def on_get_all_widgets(self, sid, data):
         """get all widgets from current User"""
         widgets_buffer = await sync_to_async(
-                BufferUserWidgetModel.objects.filter
+            BufferUserWidgetModel.objects.filter
         )(user_uuid=self.discord_user.uuid)
         widgets = [
 
@@ -93,10 +92,7 @@ class WidgetNamespace(socketio.AsyncNamespace):
                 WidgetModel.objects.get
             )(uuid=buffer.get('widget_uuid'))
 
-            widget = model_to_dict(widget)
-            widget_uuid = widget.get('widgetmodel_ptr')
-            widget['widget_uuid'] = str(widget_uuid)
-            widget.pop('widgetmodel_ptr')
+            widget = change_widgetmodel_ptr_to_uuid(model_to_dict(widget))
 
             widgets.append(widget)
 
@@ -112,22 +108,21 @@ class WidgetNamespace(socketio.AsyncNamespace):
                 user_uuid=self.discord_user,
                 widget_uuid=data
             )
-            widget = model_to_dict(data)
-            widget_uuid = widget.get('widgetmodel_ptr')
-            widget['widget_uuid'] = str(widget_uuid)
-            widget.pop('widgetmodel_ptr')
+            widget = change_widgetmodel_ptr_to_uuid(model_to_dict(data))
             await self.send(data=widget, to=sid)
         except Exception as ex:
             await self.send(data=str(ex), to=sid)
 
     async def on_update_widget(self, sid, data):
         """Update One Widget for current User"""
-        serializer = WidgetSerializer(data=data)
+        widget = await sync_to_async(
+            WidgetModel.objects.get
+        )(uuid=data.get('widget_uuid'))
+        serializer = WidgetsPolymorphicSerializer(widget, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
-        uuid = str(data.get('uuid'))
-        data = await sync_to_async(WidgetModel.objects.filter)(uuid=uuid)
-        await sync_to_async(data.update)(**serializer.data)
-        await self.send(data=serializer.data, to=sid)
+        data = await sync_to_async(serializer.save)()
+        widget = change_widgetmodel_ptr_to_uuid(model_to_dict(data))
+        await self.send(data=widget, to=sid)
 
     async def on_delete_widget(self, sid, data):
         """Delete One Widget for current User"""
@@ -136,3 +131,10 @@ class WidgetNamespace(socketio.AsyncNamespace):
         await sync_to_async(data.delete)()
         response = "widget was successfully deleted"
         await self.send(data=response, to=sid)
+
+
+def change_widgetmodel_ptr_to_uuid(widget: dict) -> dict:
+    widget_uuid = widget.get('widgetmodel_ptr')
+    widget['widget_uuid'] = str(widget_uuid).replace('-', '')
+    widget.pop('widgetmodel_ptr')
+    return widget
