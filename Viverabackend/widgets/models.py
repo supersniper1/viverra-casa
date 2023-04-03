@@ -1,8 +1,9 @@
 from django.db import models
 import uuid
+from polymorphic.models import PolymorphicModel
 
 
-class WidgetModel(models.Model):
+class WidgetModel(PolymorphicModel):
     uuid = models.UUIDField(
         default=uuid.uuid4,
         unique=True,

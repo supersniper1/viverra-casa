@@ -10,6 +10,7 @@ import os
 
 from django.shortcuts import get_object_or_404
 
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
 import django
@@ -20,7 +21,7 @@ django.setup()
 from .middleware import socket_authentication, create_response
 
 from api.v1.auth import AuthenticationBackend
-from api.v1.serializers import WidgetSerializer
+from api.v1.serializers import WidgetSerializer, WidgetsPolymorphicSerializer
 from users.models import BufferUserWidgetModel, WidgetModel
 from widgets.models import WidgetModel
 
@@ -79,45 +80,45 @@ class WidgetNamespace(socketio.AsyncNamespace):
 
     async def on_get_all_widgets(self, sid, data):
         """get all widgets from current User"""
+        widgets_buffer = await sync_to_async(
+                BufferUserWidgetModel.objects.filter
+        )(user_uuid=self.discord_user.uuid)
+        widgets = [
 
-        buffer = await sync_to_async(
-            lambda: list(
-                BufferUserWidgetModel.objects
-                .filter(user_uuid=self.discord_user.uuid)
-                # .values_list(
-                #     'widget_uuid__widget_tag',
-                #     'widget_uuid__widget_x',
-                #     'widget_uuid__widget_y',
-                #     'widget_uuid__widget_size_x',
-                #     'widget_uuid__widget_size_y',
-                #     'widget_uuid__widgetstwittermodel__tracked_name',
-                #     'widget_uuid__widgetsdiscordmodel__tracked_server'
-                # )
-            )
-        )()
-        data = [
         ]
-        for i in buffer:
-            widget_uuid = i.__dict__.get('widget_uuid_id')
-            obj = await sync_to_async(
+
+        async for buffer in widgets_buffer:
+            buffer = model_to_dict(buffer)
+            widget = await sync_to_async(
                 WidgetModel.objects.get
-            )(uuid=widget_uuid)
-            obj = model_to_dict(obj)
-            obj['uuid'] = str(widget_uuid)
-            data.append(obj)
-        await self.send(data=data, to=sid)
+            )(uuid=buffer.get('widget_uuid'))
+
+            widget = model_to_dict(widget)
+            widget_uuid = widget.get('widgetmodel_ptr')
+            widget['widget_uuid'] = str(widget_uuid)
+            widget.pop('widgetmodel_ptr')
+
+            widgets.append(widget)
+
+        await self.send(data=widgets, to=sid)
 
     async def on_post_widget(self, sid, data):
         """Create One Widget for current User"""
-        serializer = WidgetSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        data = await sync_to_async(WidgetModel.objects.create)(
-            **serializer.data
-        )
-        uuid = str(data.uuid)
-        data = model_to_dict(data)
-        data['uuid'] = uuid
-        await self.send(data=data, to=sid)
+        try:
+            serializer = WidgetsPolymorphicSerializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            data = await sync_to_async(serializer.save)()
+            await sync_to_async(BufferUserWidgetModel.objects.create)(
+                user_uuid=self.discord_user,
+                widget_uuid=data
+            )
+            widget = model_to_dict(data)
+            widget_uuid = widget.get('widgetmodel_ptr')
+            widget['widget_uuid'] = str(widget_uuid)
+            widget.pop('widgetmodel_ptr')
+            await self.send(data=widget, to=sid)
+        except Exception as ex:
+            await self.send(data=str(ex), to=sid)
 
     async def on_update_widget(self, sid, data):
         """Update One Widget for current User"""

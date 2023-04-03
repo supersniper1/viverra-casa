@@ -1,19 +1,23 @@
 import logging
 import os
+from pprint import pprint
 
 import tweepy
 from adrf.decorators import api_view
 from asgiref.sync import sync_to_async
 from django.contrib.auth import login
+from django.forms import model_to_dict
 from dotenv import load_dotenv
 from rest_framework import status
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework import viewsets
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .auth import AuthenticationBackend, get_user_from_token
-from .serializers import AuthenticationSerializer, TestSerializer
+from .serializers import AuthenticationSerializer, TestSerializer, TestDatabaseSerializer, WidgetsPolymorphicSerializer
+from widgets.models import WidgetModel, WidgetsNoteModel, WidgetsTwitterModel
 
 logging.basicConfig(
     filename='main.log',
@@ -119,5 +123,35 @@ async def discorduser(request):
 
     return Response(
         data=response,
+        status=status.HTTP_200_OK
+    )
+
+
+
+class testdatabase(viewsets.ModelViewSet):
+   queryset = WidgetModel.objects.all()
+   serializer_class = WidgetsPolymorphicSerializer
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, ])
+async def testdatabase(request):
+    """Get current user`s data """
+    serializer = TestDatabaseSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    data = None
+
+    if serializer.data.get('widget_tag') == 'note':
+        data = await sync_to_async(
+            WidgetsNoteModel.objects.create
+        )(**serializer.data)
+
+    if serializer.data.get('widget_tag') == 'twitter':
+        data = await sync_to_async(
+            WidgetsTwitterModel.objects.create
+        )(**serializer.data)
+
+    return Response(
+        data=model_to_dict(data),
         status=status.HTTP_200_OK
     )
