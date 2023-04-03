@@ -1,14 +1,10 @@
-import json
 import logging
-from pprint import pprint
 
 import jwt
 import socketio
 from asgiref.sync import sync_to_async
 
 import os
-
-from django.shortcuts import get_object_or_404
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
@@ -126,7 +122,7 @@ class WidgetNamespace(socketio.AsyncNamespace):
 
     async def on_delete_widget(self, sid, data):
         """Delete One Widget for current User"""
-        uuid = str(data.get('uuid'))
+        uuid = str(data.get('widget_uuid'))
         data = await sync_to_async(WidgetModel.objects.get)(uuid=uuid)
         await sync_to_async(data.delete)()
         response = "widget was successfully deleted"
@@ -135,6 +131,6 @@ class WidgetNamespace(socketio.AsyncNamespace):
 
 def change_widgetmodel_ptr_to_uuid(widget: dict) -> dict:
     widget_uuid = widget.get('widgetmodel_ptr')
-    widget['widget_uuid'] = str(widget_uuid).replace('-', '')
+    widget['widget_uuid'] = str(widget_uuid)
     widget.pop('widgetmodel_ptr')
     return widget
