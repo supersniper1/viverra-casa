@@ -112,6 +112,7 @@ async def discorduser(request):
         discord_id=request.user.discord_id
     )
     response = {
+        "uuid": str(discord_user.uuid).replace('-', ''),
         "discord_tag": discord_user.discord_tag,
         "email": discord_user.email,
         "avatar": discord_user.avatar,

@@ -1,0 +1,117 @@
+http://127.0.0.1:8000/api/v1/auth/
+
+POST
+{
+    "token": "vCmg98u3pJd3FDk8sGlDoTQ1XNraT8"
+}
+
+RESPONSE 
+
+{
+    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY3NzU0MjEwMSwianRpIjoiNDQ0YzY2Njc4MzI4NDMwN2I1NTgyZTE4MGUyODM4NGUiLCJ1c2VyX2lkIjoyMX0.CYipjMYeJw8hly7jkuMdbSDbR_OMePQd5P_lJfQp1T0",
+    "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc3NDYxNjQxLCJqdGkiOiIzMDQ4YmNjY2JiNDM0ZmM0YTlkYjVhZDlkNGZmNjU5NCIsInVzZXJfaWQiOjIxfQ.gerTxN_3hmnQ06kTmM1dvhzHkoNIW4_R37PkSD_74sI"
+}
+
+Socket IO
+
+http://127.0.0.1:8000/widget
+
+lissen event message
+
+Event Connected will register-auth  you in other way he reject request
+	
+response connected
+
+or response error [json]
+	
+{
+    "data": {
+        "message": "Authentication token has expired"
+    },
+    "code": 401,
+    "request_id": ""
+}
+
+Event get_all_widgets return all widgets Needed JWT token
+	
+response [json]
+	
+[
+    {
+        "widget_tag": "discord",
+        "widget_x": 9,
+        "widget_y": 8,
+        "widget_size_x": 9,
+        "widget_size_y": 8,
+        "uuid": "e0a6881b-a67c-4925-a159-713c85413b04"
+    },
+    {
+        "widget_tag": "note",
+        "widget_x": 99,
+        "widget_y": 88,
+        "widget_size_x": 99,
+        "widget_size_y": 88
+        "uuid": "36c174202eee40efa9ced38f2a0a6ec8"
+    }
+]
+
+Event post_widget create new widget return widget instanc + uuid
+
+message [json]
+	
+{
+    "widget_tag": "note",
+    "widget_x": 9,
+    "widget_y": 8,
+    "widget_size_x": 9,
+    "widget_size_y": 8
+}
+	
+response [json]
+	
+{
+    "widget_tag": "note",
+    "widget_x": 9,
+    "widget_y": 8,
+    "widget_size_x": 9,
+    "widget_size_y": 8,
+    "uuid": "167387b6-bcef-4177-af60-cf28f108297e"
+}
+
+Event delete_widget delete widget 
+
+message [json]
+	
+{
+    "uuid": "167387b6-bcef-4177-af60-cf28f108297e"
+}
+
+response [text]
+
+widget was successfully deleted 
+
+
+Event update_widget update widget required all fields 
+
+message [json]
+	
+{
+    "uuid": "36c174202eee40efa9ced38f2a0a6ec8",
+    "widget_tag": "note",
+    "widget_x": 99999,
+    "widget_y": 1,
+    "widget_size_x": 9999,
+    "widget_size_y": 1
+}
+
+response [json] updated data
+
+{
+    "widget_tag": "note",
+    "widget_x": 99999,
+    "widget_y": 1,
+    "widget_size_x": 9999,
+    "widget_size_y": 1
+}
+
+

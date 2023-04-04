@@ -61,5 +61,5 @@ class BufferUserWidgetModel(models.Model):
     widget_uuid = models.OneToOneField(
         WidgetModel,
         on_delete=models.CASCADE,
-        related_name='buffer_widget'
+        related_name='buffer_widget',
     )

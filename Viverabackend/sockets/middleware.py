@@ -45,7 +45,6 @@ def socket_authentication(jwt_token):
     :type jwt_token: bytearray
     :return: HTTP Response if authorization fails, else None
     """
-
     jwt_token = jwt_token[7:]
     payload = jwt.decode(jwt=jwt_token, key=settings.SECRET_KEY, algorithms=['HS256'])
     user_uuid = payload.get('user_id').replace('-', '')
