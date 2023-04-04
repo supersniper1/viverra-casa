@@ -8,7 +8,6 @@ RUN pip3 install -r requirements.txt --no-cache-dir
 
 COPY . .
 
-CMD ["gunicorn", "--worker-class", "uvicorn.workers.UvicornWorker", "--workers", "4", "Viverabackend.asgi:application", "--bind 0.0.0.0:8000", "--log-level", "debug"]
+#CMD ["gunicorn", "--worker-class", "uvicorn.workers.UvicornWorker", "--workers", "4", "Viverabackend.asgi:application", "--bind 0.0.0.0:8000", "--log-level", "debug"]
 
-# test for windows
-#CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "Viverabackend.asgi:application"]
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "Viverabackend.asgi:application"]
