@@ -1,7 +1,7 @@
 import React, {FunctionComponent} from "react";
 import { Provider } from "react-redux";
 import { store } from '@store/store';
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import { View } from "@views/export.views";
 
 const AppRouting: FunctionComponent = () => (
@@ -9,7 +9,7 @@ const AppRouting: FunctionComponent = () => (
     <Routes>
       <Route path='/main' element={<View.Main/>}/>
       <Route path='/test' element={<View.Test/>}/>
-      <Route path='*' element={<View.Error/>}/>
+      <Route path="/set-token/*" element={<View.Redirect/>}/>
     </Routes>
   </BrowserRouter>
 );

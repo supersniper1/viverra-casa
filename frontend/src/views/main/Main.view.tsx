@@ -1,10 +1,11 @@
 import React, {FunctionComponent, useEffect} from 'react';
-import {Square} from "@components/square/square.component";
-import {Buttons} from "@components/buttons/buttons.component";
+import { Component } from '@components/export.components';
 import {Icons} from "@assets/components/export";
 import {socket} from "@/api/ws/socket";
+import { useParams } from 'react-router-dom';
 
 export const Main: FunctionComponent = () => {
+  let params = useParams();
   useEffect(() => {
     socket.on('connect', () => {
       console.log('connected')
@@ -17,9 +18,11 @@ export const Main: FunctionComponent = () => {
   return (
     <div>
       MainPage
+      {params.token}
       <Icons.Login/>
-      <Square/>
-      <Buttons/>
+      <Component.Notes/>
+      <Component.Square/>
+      <Component.Buttons/>
     </div>
   );
 };
