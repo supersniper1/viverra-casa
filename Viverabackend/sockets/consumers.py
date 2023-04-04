@@ -20,7 +20,7 @@ from api.v1.serializers import WidgetSerializer, WidgetsPolymorphicSerializer
 from users.models import BufferUserWidgetModel, WidgetModel
 from widgets.models import WidgetModel
 
-sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*', logger=True, engineio_logger=True)
+sio = socketio.AsyncServer(async_mode='eventlet', cors_allowed_origins='*', logger=True, engineio_logger=True)
 
 logger = logging.getLogger(__name__)
 
