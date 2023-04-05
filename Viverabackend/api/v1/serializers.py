@@ -18,11 +18,7 @@ class TestSerializer(serializers.Serializer):
 
 
 class AuthenticationSerializer(serializers.ModelSerializer):
-    """
-    get: discord token
-    return: JWT token
-    description: Create Discord user or authorize
-    """
+    """Create Discord user from token or authorize"""
     token = serializers.CharField()
 
     class Meta:
@@ -31,6 +27,7 @@ class AuthenticationSerializer(serializers.ModelSerializer):
 
 
 class WidgetSerializer(serializers.ModelSerializer):
+    """Base Widget Serializer"""
     uuid = serializers.ReadOnlyField()
 
     class Meta:
@@ -46,6 +43,7 @@ class WidgetSerializer(serializers.ModelSerializer):
 
 
 class WidgetsNoteSerializer(serializers.ModelSerializer):
+    """Note widget Serializer"""
     uuid = serializers.ReadOnlyField()
 
     class Meta:
@@ -62,6 +60,7 @@ class WidgetsNoteSerializer(serializers.ModelSerializer):
 
 
 class WidgetsTwitterSerializer(serializers.ModelSerializer):
+    """Twitter widget Serializer"""
     uuid = serializers.ReadOnlyField()
 
     class Meta:
@@ -78,6 +77,7 @@ class WidgetsTwitterSerializer(serializers.ModelSerializer):
 
 
 class WidgetsDiscordSerializer(serializers.ModelSerializer):
+    """Discord widget Serializer"""
     uuid = serializers.ReadOnlyField()
 
     class Meta:
@@ -94,6 +94,7 @@ class WidgetsDiscordSerializer(serializers.ModelSerializer):
 
 
 class WidgetsPolymorphicSerializer(PolymorphicSerializer):
+    """Base Polymorphic widget Serializer"""
     model_serializer_mapping = {
         WidgetModel: WidgetSerializer,
         WidgetsNoteModel: WidgetsNoteSerializer,

@@ -18,6 +18,7 @@ CLIENT_SECRET = str(os.getenv('CLIENT_SECRET'))
 class AuthenticationBackend(BaseBackend):
     """Discord Authorization Backend
     create a new user if such a user does not exist yet
+    and can return user instance from discord_id
     """
     def authenticate(self, user=None, uuid=None) -> UserModel:
         try:
