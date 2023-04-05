@@ -1,11 +1,13 @@
 import os
-import socketio
+
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
 import django
 
 django.setup()
+
+import socketio
 
 from django.core.asgi import get_asgi_application
 
