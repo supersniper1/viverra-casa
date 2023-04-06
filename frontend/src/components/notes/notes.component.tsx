@@ -5,7 +5,7 @@ export const Notes: FunctionComponent = () => {
     return (
         <div>
             <h2>Notes Widget</h2>
-            <textarea>sad</textarea>
+            <textarea value="sad"></textarea>
         </div>
     )
 }

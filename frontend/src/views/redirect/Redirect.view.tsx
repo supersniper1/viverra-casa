@@ -1,5 +1,5 @@
 import React, {FunctionComponent, useEffect} from "react";
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { refreshAccessTokenGet } from '@api/fetch/post'
 
 export const Redirect: FunctionComponent = () => {
@@ -8,11 +8,16 @@ export const Redirect: FunctionComponent = () => {
 
     useEffect(() => {
         if(!localStorage.getItem('refresh-token')) {
-            const newToken = refreshAccessTokenGet(token)
-            console.log(newToken)
+            refreshAccessTokenGet(token)
         }
     }, [])
     console.log(token)
+
+    if (localStorage.getItem("access-token")) {
+        return (
+            <Navigate to="/main"/>
+        )
+    }
 
     return (
         <div>
