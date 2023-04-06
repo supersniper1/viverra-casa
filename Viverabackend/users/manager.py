@@ -12,7 +12,8 @@ def get_user_avatar_base64(user) -> str:
         'https://cdn.discordapp.com/avatars/{0}/{1}.webp?size=128'.format(
             user["id"],
             user["avatar"]
-        )
+        ),
+        timeout=5
     )
     avatar_b64 = str(base64.b64encode(avatar.content)).replace("'", '')[1:]
     return avatar_b64

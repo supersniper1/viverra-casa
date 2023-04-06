@@ -35,4 +35,3 @@ class BufferUserWidgetAdmin(admin.ModelAdmin):
         'user_uuid',
         'widget_uuid',
     )
-

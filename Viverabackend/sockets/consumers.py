@@ -15,7 +15,7 @@ django.setup()
 
 from .middleware import socket_authentication, create_response
 
-from api.v1.auth import AuthenticationBackend
+
 from api.v1.serializers import WidgetSerializer, WidgetsPolymorphicSerializer
 from users.models import BufferUserWidgetModel, WidgetModel
 from widgets.models import WidgetModel
@@ -33,13 +33,7 @@ class WidgetNamespace(socketio.AsyncNamespace):
         try:
             bearer_payload = environ.get('HTTP_AUTHORIZATION')
             if bearer_payload:
-                user_uuid = await sync_to_async(socket_authentication)(bearer_payload)
-
-                auth_backend = AuthenticationBackend()
-                discord_user = await sync_to_async(auth_backend.authenticate)(
-                    uuid=user_uuid
-                )
-                self.discord_user = discord_user
+                self.discord_user = await sync_to_async(socket_authentication)(bearer_payload)
                 return await self.send(data='connected', to=sid)
 
             else:

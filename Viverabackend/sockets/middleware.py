@@ -3,12 +3,14 @@ import json
 import jwt
 import logging
 
+from asgiref.sync import sync_to_async
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 
 from Viverabackend import settings
 import os
+from api.v1.auth import AuthenticationBackend
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
@@ -48,4 +50,8 @@ def socket_authentication(jwt_token):
     jwt_token = jwt_token[7:]
     payload = jwt.decode(jwt=jwt_token, key=settings.SECRET_KEY, algorithms=['HS256'])
     user_uuid = payload.get('user_id').replace('-', '')
-    return user_uuid
+    auth_backend = AuthenticationBackend()
+    discord_user = await sync_to_async(auth_backend.authenticate)(
+        uuid=user_uuid
+    )
+    return discord_user
