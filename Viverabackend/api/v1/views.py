@@ -76,10 +76,10 @@ async def authentication_view(request):
     token = serializer.data.get('token')
 
     try:
-        user = await get_user_from_token(token)
+        discord_user = await get_user_from_token(token)
 
         discord_user = await sync_to_async(AuthenticationBackend.authenticate)(
-            request, user=user
+            request, discord_user=discord_user
         )
 
         await sync_to_async(login)(request, discord_user)

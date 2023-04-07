@@ -20,16 +20,12 @@ class AuthenticationBackend(BaseBackend):
     create a new user if such a user does not exist yet
     and can return user instance from discord_id
     """
-    def authenticate(self, user=None, uuid=None) -> UserModel:
+    def authenticate(self, discord_user=None) -> UserModel:
         try:
-            if uuid:
-                find_user = get_object_or_404(UserModel, uuid=uuid)
-                return find_user
-            find_user = get_object_or_404(UserModel, discord_id=user.get('id'))
-
+            find_user = get_object_or_404(UserModel, discord_id=discord_user.get('id'))
             return find_user
         except:
-            new_user = UserModel.objects.create_user(user)
+            new_user = UserModel.objects.create_user(discord_user)
             return new_user
 
     def get_user(self, discord_id):

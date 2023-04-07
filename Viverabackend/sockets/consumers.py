@@ -35,7 +35,6 @@ class WidgetNamespace(socketio.AsyncNamespace):
             if bearer_payload:
                 self.discord_user = await sync_to_async(socket_authentication)(bearer_payload)
                 return await self.send(data='connected', to=sid)
-
             else:
                 response = create_response(
                     f"", 401, {"message": "Authorization not found, Please send valid token in headers"}

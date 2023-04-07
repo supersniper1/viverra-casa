@@ -50,8 +50,5 @@ def socket_authentication(jwt_token):
     jwt_token = jwt_token[7:]
     payload = jwt.decode(jwt=jwt_token, key=settings.SECRET_KEY, algorithms=['HS256'])
     user_uuid = payload.get('user_id').replace('-', '')
-    auth_backend = AuthenticationBackend()
-    discord_user = auth_backend.authenticate(
-        uuid=user_uuid
-    )
+    discord_user = get_object_or_404(UserModel, uuid=user_uuid)
     return discord_user
