@@ -1,0 +1,416 @@
+openapi: 3.0.3
+info:
+  title: Viverra-Casa Docs 0.2
+  contact:
+    email: simon.novikov@gmail.com
+  version: 0.0.1
+servers:
+  - url: http://158.160.30.44/api/v1/
+tags:
+  - name: authentication
+    description: authentication user
+  - name: user
+    description: user data
+  - name: socket IO
+    description: socket io websockets
+paths:
+  /api/v1/auth/:
+    post:
+      tags:
+        - authentication
+      summary: Create user from Discord token
+      description: Allow for anyone
+      operationId: createDiscordUser
+      requestBody:
+        description: Created DiscordUser object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Auth'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Auth'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Auth'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /api/v1/discorduser:
+    get:
+      tags:
+        - user
+      summary: Get User data
+      description: get data from discord user
+      operationId: Get User data
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        default:
+          description: successful operation
+  /widget/Event(get_all_widgets):
+    get:
+      tags:
+        - socket IO
+      summary: get all widgets from user
+      description: get all discord user`s widgets
+      operationId: Get User data
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_all_widgets'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/get_all_widgets'
+        default:
+          description: successful operation
+  /widget/Event(delete_widget):
+    delete:
+      tags:
+        - socket IO
+      summary: delete user`s widget 
+      description: Delete widget for discord user
+      operationId: delete
+      requestBody:
+        description: Created DiscordUser object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/delete_widget'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/delete_widget'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/delete_widget'
+      responses:
+        '204':
+          description: Successful operation
+              "widget was successfully deleted"
+              
+    
+        default:
+          description: successful operation
+  /widget/Event(update_widget):
+    put:
+      tags:
+        - socket IO
+      summary: Update user`s widget 
+      description: update widget for discord user
+      operationId: update
+      requestBody:
+        description: Created DiscordUser object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/widget_1'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/widget_1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/widget_1'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/widget_update_response'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/widget_update_response'
+        default:
+          description: successful operation
+  /widget/Event(post_widget):
+    post:
+      tags:
+        - socket IO
+      summary: Create new widget
+      description: Create new widget for discord user
+      operationId: create
+      requestBody:
+        description: Created DiscordUser object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/post_widget'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/post_widget'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/post_widget'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/widget_1'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/widget_1'
+        default:
+          description: successful operation
+  /all-resourcetype/:
+    post:
+      tags:
+        - socket IO
+      summary: All resourcetypes for widgets
+      description: Get All resourcetypes for widgets
+      requestBody:
+          content:
+            application/json:
+              schema:
+                resourcetypes:
+                type: object
+                properties:
+                  note_widget:
+                    type: string
+                    format: utf-8
+                    example: WidgetsNoteModel - text
+                  twitter_widget:
+                    type: integer
+                    format: int64
+                    example: WidgetsTwitterModel - tracked_name
+                  discord_widget:
+                    type: integer
+                    format: int64
+                    example: WidgetsDiscordModel - tracked_server
+
+      
+components:
+  schemas:
+    Auth:
+      type: object
+      properties:
+        token:
+          type: string
+          format: utf-8
+          example: Pin60xFpPY4SzchQ2RjK8TI2cGsC6A
+    AuthResponse:
+      type: object
+      properties:
+        refresh:
+          type: string
+          format: utf-8
+          example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY4MDkwMjU1OCwiaWF0IjoxNjgwODE2MTU4LCJqdGkiOiJhZTU0NGU5YzEyYWU0MjcyYWM1MDVlODlkMTU3YjhkOSIsInVzZXJfaWQiOiI0ODM4ZDQzYi1jMzYzLTQ3MjItODI3NS1lM2NlNmIwMTIzMmMifQ.qEO42rx3PxuATpltt1EdJI1pzG8V-AttPV8k5WrzhoY
+        access:
+          type: string
+          format: utf-8
+          example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgwODE2NTE4LCJpYXQiOjE2ODA4MTYxNTgsImp0aSI6IjEyOWIzMDZjYjIzOTRlZTFhNWVjNWM5YmM5NmYzMTE1IiwidXNlcl9pZCI6IjQ4MzhkNDNiLWMzNjMtNDcyMi04Mjc1LWUzY2U2YjAxMjMyYyJ9.ITUDvN5nbvaT3hr8YiFJXyNXDTeMhioe9dENb201BWk
+    UserResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: utf-8
+          example: 4838d43bc36347228275e3ce6b01232c
+        discord_tag:
+          type: string
+          format: utf-8
+          example: Sovraska#4344
+        email:
+          type: string
+          format: utf-8
+          example: some.fake@gmail.com
+        avatar:
+          type: string
+          format: base64
+          example: UklGRnAUAABXRUJQVlA4WAoAAAAQAAAAfwAAfwAAQUxQSBcAAAABD3Dr/4iIQDZpYz7v/3shov8RALC/BwBWUDggMhQAABBEAJ0BKoAAgAA+aSaQRaQiIZo8fbxABoS0gArzjy694v2L+mftN55/iHyf9Z/sH7Sf3L2ecp/TV/h+hX8S+un4z+5fuX/b/XP/QeB/xG/svUC/GP5f/iv7D+4vuD/KdiZqv+W/1/9r9gL2S+m/6P9fP+T/kPRA/kfQ77Af6r3AP5r/S/91+cn91+bv9f4Df3f/b+wB/M/63/0/8d+VH0qfx//a/x/5Wezv8+/wv/Z/zHw.....
+    widget_1:
+      type: "object"
+      properties:
+        widget_tag:
+          type: string
+          format: utf-8
+          example: note
+        widget_x:
+          type: integer
+          format: int64
+          example: 9
+        widget_y:
+          type: integer
+          format: int64
+          example: 8
+        widget_size_x:
+          type: integer
+          format: int64
+          example: 9
+        widget_size_y:
+          type: integer
+          format: int64
+          example: 8
+        text:
+          type: string
+          format: utf-8
+          example: test text
+        widget_uuid:
+          type: string
+          format: utf-8
+          example: 220a5e79-a151-4e0c-88d8-2047d3990426
+    widget_2:
+      type: "object"
+      properties:
+        widget_tag:
+          type: string
+          format: utf-8
+          example: Twitter
+        widget_x:
+          type: integer
+          format: int64
+          example: 99
+        widget_y:
+          type: integer
+          format: int64
+          example: 888
+        widget_size_x:
+          type: integer
+          format: int64
+          example: 999
+        widget_size_y:
+          type: integer
+          format: int64
+          example: 8
+        tracked_name:
+          type: string
+          format: utf-8
+          example: ElonMusk
+        widget_uuid:
+          type: string
+          format: utf-8
+          example: 3cb7bcf2-08c5-46b1-a8c0-a5c9e2c04b5a
+    widget_3:
+      type: "object"
+      properties:
+        widget_tag:
+          type: string
+          format: utf-8
+          example: discord
+        widget_x:
+          type: integer
+          format: int64
+          example: 99999
+        widget_y:
+          type: integer
+          format: int64
+          example: 89
+        widget_size_x:
+          type: integer
+          format: int64
+          example: 98
+        widget_size_y:
+          type: integer
+          format: int64
+          example: 8888
+        tracked_server:
+          type: string
+          format: utf-8
+          example: Test Server
+        widget_uuid:
+          type: string
+          format: utf-8
+          example: 7ce8fa8e-e657-402d-9d83-4a2d9ed47a84
+    get_all_widgets:
+      type: "array"
+      items:
+        properties:
+          test:
+            $ref: "#/components/schemas/widget_1"
+          test2:
+            $ref: "#/components/schemas/widget_2"
+          test3:
+            $ref: "#/components/schemas/widget_3"
+            
+    delete_widget:
+      type: object
+      properties:
+        widget_uuid:
+          type: string
+          format: utf-8
+          example: 220a5e79-a151-4e0c-88d8-2047d3990426
+          
+    widget_update_response:
+      type: "object"
+      properties:
+        widget_tag:
+          type: string
+          format: utf-8
+          example: note
+        widget_x:
+          type: integer
+          format: int64
+          example: 9
+        widget_y:
+          type: integer
+          format: int64
+          example: 8
+        widget_size_x:
+          type: integer
+          format: int64
+          example: 9
+        widget_size_y:
+          type: integer
+          format: int64
+          example: 8
+        text:
+          type: string
+          format: utf-8
+          example: test text
+        widget_uuid:
+          type: string
+          format: utf-8
+          example: 220a5e79-a151-4e0c-88d8-2047d3990426
+    post_widget:
+      type: object
+      properties:
+        widget_tag:
+          type: string
+          format: utf-8
+          example: note
+        widget_x:
+          type: integer
+          format: int64
+          example: 9
+        widget_y:
+          type: integer
+          format: int64
+          example: 8
+        widget_size_x:
+          type: integer
+          format: int64
+          example: 9
+        widget_size_y:
+          type: integer
+          format: int64
+          example: 8
+        text:
+          type: string
+          format: utf-8
+          example: test text
+        resourcetype:
+          type: string
+          format: utf-8
+          example: WidgetsNoteModel
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header

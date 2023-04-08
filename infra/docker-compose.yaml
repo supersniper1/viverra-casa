@@ -48,6 +48,8 @@ services:
       - static_value:/var/html/static/
       - media_value:/var/html/media/
       - ../frontend/dist/:/usr/share/nginx/html/
+      - ../Viverabackend/templates/redoc.html:/var/html/redoc/redoc.html
+      - ../Viverabackend/templates/Viverra-Casa Docs 0.2.yaml:/var/html/redoc/Viverra-Casa Docs 0.2.yaml
 
     depends_on:
       - backend
