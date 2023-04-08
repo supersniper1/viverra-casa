@@ -332,13 +332,9 @@ components:
     get_all_widgets:
       type: "array"
       items:
-        properties:
-          test:
-            $ref: "#/components/schemas/widget_1"
-          test2:
-            $ref: "#/components/schemas/widget_2"
-          test3:
-            $ref: "#/components/schemas/widget_3"
+          - $ref: "#/components/schemas/widget_1"
+          - $ref: "#/components/schemas/widget_2"
+          - $ref: "#/components/schemas/widget_3"
             
     delete_widget:
       type: object
