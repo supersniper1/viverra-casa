@@ -59,9 +59,7 @@ async def get_user_from_token(token: str) -> UserModel:
             data=data,
             headers=headers
         )
-        print(response)
         credentials = response.json()
-        print(credentials)
         access_token = credentials['access_token']
 
         response = await client.get(
