@@ -38,7 +38,7 @@ async def async_view_test(request):
     user = await sync_to_async(auth.get_user)(
         username=serializer.data.get('username')
     )
-
+    print(user)
     session = await sync_to_async(auth.get_users_tweets)(
         user.data.id
     )
