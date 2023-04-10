@@ -34,7 +34,7 @@ class WidgetNamespace(socketio.AsyncNamespace):
             bearer_payload = environ.get('HTTP_AUTHORIZATION')
             if bearer_payload:
                 self.discord_user = await sync_to_async(socket_authentication)(bearer_payload)
-                if not self.discord_user:
+                if self.discord_user is None:
                     response = create_response(
                         f"", 400, {"message": "User Not Found"}
                     )
