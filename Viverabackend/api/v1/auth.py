@@ -53,13 +53,15 @@ async def get_user_from_token(token: str) -> UserModel:
         'Content-Type': "application/x-www-form-urlencoded",
     }
 
-    async with httpx.AsyncClient(timeout=10.0) as client:
+    async with httpx.AsyncClient(timeout=200) as client:
         response = await client.post(
             'https://discord.com/api/oauth2/token',
             data=data,
             headers=headers
         )
+        print(response)
         credentials = response.json()
+        print(credentials)
         access_token = credentials['access_token']
 
         response = await client.get(

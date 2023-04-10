@@ -74,7 +74,7 @@ class WidgetNamespace(socketio.AsyncNamespace):
     async def on_disconnect(self, sid):
         logger.info('User with sid: %s has been disconnected.', sid)
 
-    async def on_get_all_widgets(self, sid):
+    async def on_get_all_widgets(self, sid, data):
         """get all widgets from current User"""
         widgets_buffer = await sync_to_async(
             BufferUserWidgetModel.objects.filter
