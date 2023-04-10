@@ -1,14 +1,19 @@
-import { io, Socket } from "socket.io-client";
+import {io, Socket} from "socket.io-client";
 
 export const socket: Socket = io(
-  process.env.NODE_ENV === "production" ? "/widget/" : "http://158.160.30.44/widget/",
+  process.env.NODE_ENV === "production" ? "/widget/" : "http://sovraska.ru/widget",
   {
-    extraHeaders: {
-      "Authorization": `Bearer ${localStorage.getItem("access-token")}`
+    transportOptions: {
+      polling: {
+        extraHeaders: {
+          "Authorization":
+            `Bearer ${localStorage.getItem("access-token")}`
+        }
+      }
     },
     forceNew: true,
     timeout: 10000,
     rejectUnauthorized: false,
-    transports:  ['websocket', 'polling', 'flashsocket']
+    transports: ['websocket', 'polling', 'flashsocket']
   }
 );

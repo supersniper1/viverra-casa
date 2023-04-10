@@ -8,13 +8,13 @@ export const Main: FunctionComponent = () => {
   let params = useParams();
   useEffect(() => {
     if (localStorage.getItem("access-token")) {
-      socket.on('connect', () => {
+      socket.on("connect", () => {
         console.log('connected')
+        socket.emit("get_all_widgets")
+        socket.on("message", (message: any) => {
+          console.log(message)
+        })
       });
-      socket.on("message", (message: any) => {
-        console.log(message)
-      })
-      socket.emit("get_all_widgets")
     }}, []);
 
   return (

@@ -1,5 +1,5 @@
 export const refreshAccessTokenGet = async (token: string) => {
-    const response = await fetch('http://158.160.30.44/api/v1/auth/', {
+    const response = await fetch('http://sovraska.ru/api/v1/auth/', {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
@@ -14,7 +14,7 @@ export const refreshAccessTokenGet = async (token: string) => {
         localStorage.setItem("access-token", json.access)
         localStorage.setItem("refresh-token", json.refresh)
     } else {
-        console.log("error in post.ts refreshAccessTokenGet " + response.status)
+        console.log(response)
         return "error in post.ts refreshAccessTokenGet"
     }
   }
