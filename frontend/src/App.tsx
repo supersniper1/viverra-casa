@@ -9,6 +9,7 @@ const AppRouting: FunctionComponent = () => (
     <Routes>
       <Route path='/main' element={<View.Main/>}/>
       <Route path='/test' element={<View.Test/>}/>
+      <Route path='*' element={<Navigate to="/main"/>}/>
       <Route path="/set-token/*" element={<View.Redirect/>}/>
     </Routes>
   </BrowserRouter>
