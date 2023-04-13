@@ -10,10 +10,11 @@ export const Main: FunctionComponent = () => {
     if (localStorage.getItem("access-token")) {
       socket.on("connect", () => {
         console.log('connected')
-        socket.emit("get_all_widgets", null, (data: any) => {
-          console.log(data)
-        })
+        socket.emit("get_all_widgets", null)
         socket.on("message", (message: any) => {
+          console.log(message)
+        })
+        socket.on("get_all_widgets_answer", (message: any) => {
           console.log(message)
         })
       });
