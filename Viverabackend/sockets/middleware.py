@@ -1,6 +1,7 @@
 import jwt
 import logging
 
+from asgiref.sync import sync_to_async
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 
@@ -35,7 +36,7 @@ def create_response(request_id, code, message):
         logger.error(f'create_response:{creation_error}')
 
 
-def socket_authentication(jwt_token):
+async def socket_authentication(jwt_token):
     """
     Custom middleware handler to check authentication for a user with JWT authentication
     :param jwt_token: jwt Bearer token
@@ -48,5 +49,5 @@ def socket_authentication(jwt_token):
 
     user_uuid = payload.get('user_id').replace('-', '')
 
-    discord_user = get_object_or_404(UserModel, uuid=user_uuid)
+    discord_user = await sync_to_async(get_object_or_404)(UserModel, uuid=user_uuid)
     return discord_user
