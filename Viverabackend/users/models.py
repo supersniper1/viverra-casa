@@ -63,3 +63,22 @@ class BufferUserWidgetModel(models.Model):
         on_delete=models.CASCADE,
         related_name='buffer_widget',
     )
+
+
+class BufferUserSocketModel(models.Model):
+    """This is Buffer model
+    for Socket io session
+    """
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        primary_key=True,
+        editable=False
+    )
+    user_uuid = models.ForeignKey(
+        UserModel,
+        on_delete=models.CASCADE,
+        related_name='socket_user'
+    )
+
+    socket_id = models.CharField(max_length=100)

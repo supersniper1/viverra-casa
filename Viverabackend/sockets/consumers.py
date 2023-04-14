@@ -17,7 +17,7 @@ django.setup()
 from .middleware import socket_authentication, create_response
 
 from api.v1.serializers import WidgetSerializer, WidgetsPolymorphicSerializer
-from users.models import BufferUserWidgetModel, WidgetModel
+from users.models import BufferUserWidgetModel, BufferUserSocketModel
 from widgets.models import WidgetModel
 
 sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*', logger=True, engineio_logger=False)
@@ -27,14 +27,17 @@ logger = logging.getLogger(__name__)
 
 class WidgetNamespace(socketio.AsyncNamespace):
     """Widget Namespace"""
-    discord_user = None
 
     async def on_connect(self, sid, environ):
+        """Authentication user and create Session_socket object
+
+        Handle all Errors and return to request On "errror" Event
+        """
         try:
             bearer_payload = environ.get('HTTP_AUTHORIZATION')
             if bearer_payload:
-                self.discord_user = await sync_to_async(socket_authentication)(bearer_payload)
-                if self.discord_user is None:
+                discord_user = await sync_to_async(socket_authentication)(bearer_payload)
+                if discord_user is None:
                     response = create_response(
                         f"", 400, {"message": "User Not Found"}
                     )
@@ -42,6 +45,10 @@ class WidgetNamespace(socketio.AsyncNamespace):
 
                     await self.emit('error', data=response, to=sid)
                     await self.emit('disconnect')
+                await sync_to_async(BufferUserSocketModel.objects.create)(
+                    user_uuid=discord_user,
+                    socket_id=sid
+                )
                 # await sio.save_session(sid, {'user': user})
                 await self.emit('connect_answer', data='Connected', to=sid)
             else:
@@ -73,13 +80,21 @@ class WidgetNamespace(socketio.AsyncNamespace):
             await self.emit('disconnect')
 
     async def on_disconnect(self, sid):
+        """on Disconnect Destroy session object"""
         logger.info('User with sid: %s has been disconnected.', sid)
+        socket_session = await sync_to_async(BufferUserSocketModel.objects.get)(
+            socket_id=sid
+        )
+        await sync_to_async(socket_session.delete)()
 
     async def on_get_all_widgets(self, sid, data):
         """get all widgets from current User"""
+        socket_session = await sync_to_async(BufferUserSocketModel.objects.select_related('user_uuid').get)(
+            socket_id=sid
+        )
         widgets_buffer = await sync_to_async(
             BufferUserWidgetModel.objects.filter
-        )(user_uuid=str(self.discord_user.uuid))
+        )(user_uuid=socket_session.user_uuid)
 
         widgets = []
         async for buffer in widgets_buffer:
@@ -96,17 +111,19 @@ class WidgetNamespace(socketio.AsyncNamespace):
     async def on_post_widget(self, sid, data):
         """Create One Widget for current User"""
         try:
+            socket_session = await sync_to_async(BufferUserSocketModel.objects.select_related('user_uuid').get)(
+                socket_id=sid
+            )
             serializer = WidgetsPolymorphicSerializer(data=data)
             serializer.is_valid(raise_exception=True)
             data = await sync_to_async(serializer.save)()
 
             await sync_to_async(BufferUserWidgetModel.objects.create)(
-                user_uuid=self.discord_user,
+                user_uuid=socket_session.user_uuid,
                 widget_uuid=data
             )
 
             widget = change_widgetmodel_ptr_to_uuid(model_to_dict(data))
-            print(widget)
             await self.emit('post_widget_answer', data=widget, to=sid)
 
         except Exception as ex:
