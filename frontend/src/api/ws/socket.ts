@@ -6,7 +6,7 @@ export const socket: Socket = io(
     transportOptions: {
       polling: {
         extraHeaders: {
-          "Authorization":
+          Authorization:
             `Bearer ${localStorage.getItem("access-token")}`
         }
       }
@@ -14,6 +14,8 @@ export const socket: Socket = io(
     forceNew: true,
     timeout: 10000,
     rejectUnauthorized: false,
-    transports: ['websocket', 'polling', 'flashsocket']
+    autoConnect: false,
+    reconnection: false,
+    transports: ['polling', 'flashsocket']
   }
 );
