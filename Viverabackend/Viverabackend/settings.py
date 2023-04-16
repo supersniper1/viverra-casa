@@ -8,7 +8,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["158.160.30.44", ]
+ALLOWED_HOSTS = ["158.160.30.44", "127.0.0.1"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -38,10 +38,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'Viverabackend.urls'
 
+TEMPLATES_DIR = BASE_DIR / 'templates'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATES_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -86,9 +88,9 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [

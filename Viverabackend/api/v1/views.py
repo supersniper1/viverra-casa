@@ -38,7 +38,7 @@ async def async_view_test(request):
     user = await sync_to_async(auth.get_user)(
         username=serializer.data.get('username')
     )
-
+    print(user)
     session = await sync_to_async(auth.get_users_tweets)(
         user.data.id
     )
@@ -76,11 +76,10 @@ async def authentication_view(request):
     token = serializer.data.get('token')
 
     try:
-        print(request)
-        user = await get_user_from_token(token)
+        discord_user = await get_user_from_token(token)
 
         discord_user = await sync_to_async(AuthenticationBackend.authenticate)(
-            request, user=user
+            request, discord_user=discord_user
         )
 
         await sync_to_async(login)(request, discord_user)
