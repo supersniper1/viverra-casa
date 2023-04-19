@@ -4,6 +4,10 @@ import {socket} from "@api/ws/socket";
 
 export const Buttons: FunctionComponent = () => {
 
+  const {
+    WidgetsRefreshList,
+  } = useActions()
+
   const notesObj = {
     "widget_tag": "note",
     "widget_x": 9,
@@ -20,11 +24,17 @@ export const Buttons: FunctionComponent = () => {
     TestChangeHeight,
   } = useActions()
 
+  const postWidget = () => {
+    socket.emit("post_widget", notesObj)
+    socket.emit("get_all_widgets", null)
+    socket.on("get_all_widgets_answer", (message: any) => {
+      WidgetsRefreshList(message)
+    })
+  }
+
   return (
     <div>
-      <button onClick={() => socket.emit("post_widget", notesObj, (data: any) => {
-        console.log(data)
-      })}>add notes widget</button>
+      <button onClick={postWidget}>add notes widget</button>
       <button onClick={() => TestChangeWidth(200)}>width +</button>
       <button onClick={() => TestChangeHeight(200)}>height +</button>
     </div>

@@ -1,4 +1,4 @@
-import React, {FunctionComponent, useEffect} from 'react';
+import React, {FunctionComponent, useMemo} from 'react';
 import { Component } from '@components/export.components';
 import {Icons} from "@assets/components/export";
 import {socket} from "@/api/ws/socket";
@@ -11,7 +11,7 @@ export const Main: FunctionComponent = () => {
   } = useActions()
 
   let params = useParams();
-  useEffect(() => {
+  useMemo(() => {
     if (localStorage.getItem("access-token")) {
       socket.connect()
       socket.on("connect", () => {

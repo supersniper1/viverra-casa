@@ -19,5 +19,5 @@
       "@views/*": ["./src/views/*"]
     }
   },
-  "files": ["src/index.tsx"]
+  "include": ["./ext.d.ts", "src", "./src/index.tsx"]
 }
