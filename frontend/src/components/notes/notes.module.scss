@@ -1,7 +1,6 @@
 .notesWidget {
   border: 1px black solid;
-  resize: both;
-  overflow: auto;
+  position: absolute;
 }
 .notesWidgetHandle {
   background: grey;

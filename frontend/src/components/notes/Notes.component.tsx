@@ -3,7 +3,9 @@ import {IWidgetSlice} from "@store/slices/widgets/widgets.slice";
 import {socket} from "@api/ws/socket";
 import {useActions} from "@hooks/redux.useActions";
 import s from "./notes.module.scss"
-import Draggable from 'react-draggable';
+import Draggable, {DraggableData, DraggableEvent} from 'react-draggable';
+
+const {Resizable} = require('react-resizable');
 
 interface Notes {
   widget: IWidgetSlice;
@@ -28,20 +30,34 @@ export const Notes: FunctionComponent<Notes> = ({widget}) => {
     })
   }
 
+  const draggableOnStop = (e: DraggableEvent, data: DraggableData) => {
+    setNotesWidget(prev => ({
+      ...prev,
+      widget_x: data.lastX,
+      widget_y: data.lastY,
+    }))
+  }
+
   return (
-    <Draggable handle=".handle">
-      <div className={s.notesWidget}>
-        <div>
-          <button onClick={deleteWidget}>x</button>
-          <div className={`handle ${s.notesWidgetHandle}`}></div>
+    <Draggable
+      handle=".handle"
+      defaultPosition={{x: widget.widget_x, y: widget.widget_y}}
+      onStop={(e, data) => draggableOnStop(e, data)}
+    >
+      <Resizable height={200} width={200}>
+        <div className={s.notesWidget}>
+          <div>
+            <button onClick={deleteWidget}>x</button>
+            <div className={`handle ${s.notesWidgetHandle}`}></div>
+          </div>
+          <textarea value={notesWidget.text} onChange={event => {
+            setNotesWidget(prev => ({
+              ...prev,
+              text: event.target.value,
+            }))
+          }} className={s.notesWidgetTextarea}></textarea>
         </div>
-        <textarea value={notesWidget.text} onChange={event => {
-          setNotesWidget(prev => ({
-            ...prev,
-            text: event.target.value,
-          }))
-        }} className={s.notesWidgetTextarea}></textarea>
-      </div>
+      </Resizable>
     </Draggable>
   )
 }
