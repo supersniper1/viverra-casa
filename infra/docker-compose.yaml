@@ -21,6 +21,19 @@ services:
     env_file:
       - ./.env
 
+  chrome:
+    container_name: chrome
+    image: selenium/standalone-chrome:latest
+    ports:
+      - "4444:4444"
+    hostname: chrome
+    privileged: true
+    shm_size: 2g
+    depends_on:
+      - db
+    environment:
+      - JAVA_OPTS=-Dselenium.LOGGER.level=WARNING -Dwebdriver.chrome.whitelistedIps=*
+
   backend:
     container_name: backend
     build:
@@ -31,9 +44,9 @@ services:
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
-
     depends_on:
       - db
+      - chrome
     env_file:
       - ./.env
 

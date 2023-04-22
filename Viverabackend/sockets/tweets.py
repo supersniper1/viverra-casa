@@ -6,14 +6,10 @@ import time
 import requests
 import tweepy
 from selenium import webdriver
+from selenium.webdriver import DesiredCapabilities
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 TWEEPY_TOKEN = str(os.getenv('TWEEPY_TOKEN'))
-options = webdriver.ChromeOptions()
-options.add_argument('--headless')
-driver = webdriver.Chrome(options=options)
 
 
 def time_test(func):
@@ -30,10 +26,19 @@ def time_test(func):
 
 @time_test
 def get_tweets_from_username(username):
+    options = webdriver.ChromeOptions()
+    # options.add_argument('--headless')
+    # options.add_argument('--disable-dev-shm-usage')
+    # options.add_argument('--no-sandbox')
+    # options.add_argument('--disable-extensions')
+    # options.add_argument('--disable-gpu')
+
+    driver = webdriver.Remote(desired_capabilities=DesiredCapabilities().CHROME,
+                              command_executor="http://chrome:4444/wd/hub", options=options)
+
     url = f"https://twitter.com/{username}"
     driver.get(url)
     tweets = []
-    result = False
 
     # Get scroll height after first time page load
     last_height = driver.execute_script("return document.body.scrollHeight")
@@ -43,7 +48,7 @@ def get_tweets_from_username(username):
     counter = 0
     number = 2
 
-    while True or counter == number:
+    while True:
         # Scroll down to bottom
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         # Wait to load page
