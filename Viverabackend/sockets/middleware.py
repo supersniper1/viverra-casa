@@ -41,7 +41,7 @@ async def socket_authentication(jwt_token):
     Custom middleware handler to check authentication for a user with JWT authentication
     :param jwt_token: jwt Bearer token
     :type jwt_token: bytearray
-    :return: HTTP Response if authorization fails, else None
+    :return: discord_user
     """
     jwt_token = jwt_token[7:]
 

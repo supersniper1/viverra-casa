@@ -1,11 +1,18 @@
+import asyncio
 import logging
+import time
 from pprint import pprint
 
 import jwt
 import socketio
+import tweepy
 from asgiref.sync import sync_to_async
-
+from api.v1.serializers import WidgetSerializer, WidgetsPolymorphicSerializer
+from users.models import BufferUserWidgetModel, BufferUserSocketModel
+from widgets.models import WidgetModel
 import os
+
+from dotenv import load_dotenv
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
@@ -14,15 +21,16 @@ from django.forms.models import model_to_dict
 
 django.setup()
 
+from api.v1.serializers import TestSerializer
 from .middleware import socket_authentication, create_response
-
-from api.v1.serializers import WidgetSerializer, WidgetsPolymorphicSerializer
-from users.models import BufferUserWidgetModel, BufferUserSocketModel
-from widgets.models import WidgetModel
-
+from .tweets import get_tweets_from_username
 sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*', logger=True, engineio_logger=False)
 
+load_dotenv()
+
 logger = logging.getLogger(__name__)
+
+
 
 
 class WidgetNamespace(socketio.AsyncNamespace):
@@ -154,6 +162,18 @@ class WidgetNamespace(socketio.AsyncNamespace):
 
             response = "widget was successfully deleted"
             await self.emit('delete_widget_answer', data=response, to=sid)
+        except Exception as ex:
+            await self.emit('error', data=str(ex), to=sid)
+
+    async def on_tweets(self, sid, data):
+        """Sand new tweets of user"""
+        try:
+            serializer = TestSerializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            response = await sync_to_async(get_tweets_from_username)(
+                serializer.validated_data.get('username')
+            )
+            await self.emit('tweets_answer', data=response, to=sid)
         except Exception as ex:
             await self.emit('error', data=str(ex), to=sid)
 
