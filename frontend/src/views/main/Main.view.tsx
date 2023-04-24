@@ -31,11 +31,7 @@ export const Main: FunctionComponent = () => {
 
   return (
     <div>
-      MainPage
-      {params.token}
       <Icons.Login/>
-      <Component.Square/>
-      <Component.Buttons/>
       <Component.Workspace/>
     </div>
   );
