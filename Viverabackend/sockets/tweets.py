@@ -27,14 +27,15 @@ def time_test(func):
 @time_test
 def get_tweets_from_username(username):
     options = webdriver.ChromeOptions()
-    # options.add_argument('--headless')
-    # options.add_argument('--disable-dev-shm-usage')
-    # options.add_argument('--no-sandbox')
-    # options.add_argument('--disable-extensions')
-    # options.add_argument('--disable-gpu')
+    options.add_argument('--headless')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-extensions')
+    options.add_argument('--disable-gpu')
 
-    driver = webdriver.Remote(desired_capabilities=DesiredCapabilities().CHROME,
-                              command_executor="http://chrome:4444/wd/hub", options=options)
+    # driver = webdriver.Remote(desired_capabilities=DesiredCapabilities().CHROME,
+    #                           command_executor="http://chrome:4444/wd/hub", options=options)
+    driver = webdriver.Chrome(options=options)
 
     url = f"https://twitter.com/{username}"
     driver.get(url)
@@ -74,13 +75,13 @@ def get_tweets_from_username(username):
             except:
                 text = '[empty]'
 
-            try:
-                replying_to = item.find_element(By.XPATH, './/div[contains(text(), "Replying to")]//a').text
-            except:
-                replying_to = '[empty]'
+            # try:
+            #     replying_to = item.find_element(By.XPATH, './/div[contains(text(), "Replying to")]//a').text
+            # except:
+            #     replying_to = '[empty]'
 
             # Append new tweets replies to tweet array
-            tweets.append([username, replying_to, text, date])
+            tweets.append([username, text, date])
 
             if (last_elem == current_elem):
                 result = True
