@@ -1,11 +1,12 @@
 import os
+from pathlib import Path
 
 import httpx
 from django.contrib.auth.backends import BaseBackend
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from dotenv import load_dotenv
-from pathlib import Path
+
 from users.models import UserModel
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent

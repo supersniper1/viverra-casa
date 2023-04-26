@@ -1,8 +1,9 @@
 from rest_framework import serializers
+from rest_polymorphic.serializers import PolymorphicSerializer
 
 from users.models import UserModel
-from widgets.models import WidgetModel, WidgetsNoteModel, WidgetsTwitterModel, WidgetsDiscordModel
-from rest_polymorphic.serializers import PolymorphicSerializer
+from widgets.models import (WidgetModel, WidgetsDiscordModel, WidgetsNoteModel,
+                            WidgetsTwitterModel)
 
 
 class TestSerializer(serializers.Serializer):

@@ -1,4 +1,3 @@
-from .consumers import WidgetNamespace
-from .consumers import sio
+from .consumers import WidgetNamespace, sio
 
 sio.register_namespace(WidgetNamespace('/widget'))

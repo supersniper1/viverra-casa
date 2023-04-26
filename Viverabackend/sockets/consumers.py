@@ -1,18 +1,14 @@
-import asyncio
 import logging
-import time
-from pprint import pprint
+import os
 
 import jwt
 import socketio
-import tweepy
 from asgiref.sync import sync_to_async
-from api.v1.serializers import WidgetSerializer, WidgetsPolymorphicSerializer
-from users.models import BufferUserWidgetModel, BufferUserSocketModel
-from widgets.models import WidgetModel
-import os
-
 from dotenv import load_dotenv
+
+from api.v1.serializers import WidgetSerializer, WidgetsPolymorphicSerializer
+from users.models import BufferUserSocketModel, BufferUserWidgetModel
+from widgets.models import WidgetModel
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
@@ -22,8 +18,10 @@ from django.forms.models import model_to_dict
 django.setup()
 
 from api.v1.serializers import TestSerializer
-from .middleware import socket_authentication, create_response
+
+from .middleware import create_response, socket_authentication
 from .tweets import get_tweets_from_username
+
 sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*', logger=True, engineio_logger=False)
 
 load_dotenv()

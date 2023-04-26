@@ -1,8 +1,7 @@
 from django.contrib import admin
 
-
-from .models import WidgetsDiscordModel, WidgetsTwitterModel, WidgetModel, WidgetsNoteModel
-
+from .models import (WidgetModel, WidgetsDiscordModel, WidgetsNoteModel,
+                     WidgetsTwitterModel)
 
 # @admin.register(WidgetModel)
 # class WidgetAdmin(admin.ModelAdmin):
