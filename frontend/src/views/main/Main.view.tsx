@@ -1,12 +1,13 @@
 import React, {FunctionComponent, useMemo} from 'react';
 import { Component } from '@components/export.components';
-import {Icons} from "@assets/components/export";
 import {socket} from "@/api/ws/socket";
 import {useActions} from "@hooks/redux.useActions";
 
 export const Main: FunctionComponent = () => {
   const {
     WidgetsRefreshList,
+    Logout,
+    Login,
   } = useActions()
 
   useMemo(() => {
@@ -14,6 +15,7 @@ export const Main: FunctionComponent = () => {
       socket.connect()
       socket.on("connect", () => {
         console.log('connect')
+        Login()
       });
       socket.emit("get_all_widgets", null)
       socket.on("message", (message: any) => {
@@ -21,6 +23,7 @@ export const Main: FunctionComponent = () => {
       })
       socket.on("error", (error: any) => {
         console.log(error)
+        Logout()
       })
       socket.on("get_all_widgets_answer", (message: any) => {
         WidgetsRefreshList(message)
@@ -29,7 +32,6 @@ export const Main: FunctionComponent = () => {
 
   return (
     <div>
-      <Icons.Login/>
       <Component.Workspace/>
     </div>
   );

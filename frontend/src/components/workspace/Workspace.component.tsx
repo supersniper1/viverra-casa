@@ -2,9 +2,10 @@ import React, {FunctionComponent} from 'react';
 import {useTypedSelector} from "@hooks/redux.useTypedSelector";
 import {Component} from "@components/export.components";
 import s from "./workspace.module.scss"
-import { Icons } from '@/assets/components/export';
+import {Icons} from '@/assets/components/export';
 import {useActions} from "@hooks/redux.useActions";
 import {socket} from "@api/ws/socket";
+import {IWidgetSlice} from "@store/slices/widgets/widgets.slice";
 
 export const Workspace: FunctionComponent = () => {
   const widgets = useTypedSelector((state) => state.Widgets.all_widgets)
@@ -19,8 +20,10 @@ export const Workspace: FunctionComponent = () => {
     "widget_tag": "note",
     "widget_x": 9,
     "widget_y": 8,
-    "widget_size_x": 9,
-    "widget_size_y": 8,
+    "widget_size_x": 200,
+    "widget_size_y": 200,
+    "z_index": 1,
+    "is_collapsed": false,
     "text": "test text",
     "resourcetype": "WidgetsNoteModel"
   }
@@ -33,16 +36,37 @@ export const Workspace: FunctionComponent = () => {
     })
   }
 
+  const uncollapse = (widget: IWidgetSlice) => {
+    const collapsedWidget = {
+      ...widget,
+      "is_collapsed": false,
+    }
+    socket.emit("update_widget", collapsedWidget)
+    socket.emit("get_all_widgets", null)
+    socket.on("get_all_widgets_answer", (message: any) => {
+      WidgetsRefreshList(message)
+    })
+  }
+
   return (
     <div className={s.workspace}>
       {widgets.map((widget) => (
-        <div>
-          {widget.widget_tag === 'note' && (
+        widget.is_collapsed === false && (
+          widget.widget_tag === 'note' && (
             <Component.Notes key={widget.widget_uuid} widget={widget}/>
-          )}
-        </div>
+          )
+        )
       ))}
       <div className={s.bottomPanel}>
+        {widgets.map((widget) => (
+          widget.is_collapsed === true && (
+            widget.widget_tag === 'note' && (
+              <button onClick={() => uncollapse(widget)}>
+                <Icons.NotesCollapsed className={s.NotesCollapsedIcon}/>
+              </button>
+            )
+          )
+        ))}
         <button onClick={postWidget} className={s.button}>
           <Icons.AddWidget className={s.addWidgetIcon}/>
         </button>

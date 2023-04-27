@@ -7,6 +7,8 @@ export interface IWidgetSlice {
   widget_size_y: number;
   widget_x: number;
   widget_y: number;
+  z_index: number;
+  is_collapsed: boolean;
   tracked_server?: string;
   text?: string;
 }
