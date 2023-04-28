@@ -2,7 +2,7 @@ import React, {FunctionComponent, useMemo, useState} from 'react';
 import {IWidgetSlice} from "@store/slices/widgets/widgets.slice";
 import {socket} from "@api/ws/socket";
 import {useActions} from "@hooks/redux.useActions";
-import s from "./notes.module.scss"
+import s from "./notes.module.scss";
 import Draggable, {DraggableData, DraggableEvent} from 'react-draggable';
 import {Resizable} from 're-resizable';
 import {Icons} from "@assets/components/export";

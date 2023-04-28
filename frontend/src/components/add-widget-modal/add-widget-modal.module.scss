@@ -1,0 +1,100 @@
+.Background {
+  opacity: 1;
+  pointer-events: all;
+  position: absolute;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  background: #13131360;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.Hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.ModalWindow {
+  width: 605px;
+  height: 438px;
+  background: #FBFBFB;
+  border: 1px solid #BFBFD7;
+  border-radius: 15px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+.Tittle {
+  width: 277px;
+  height: 42px;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 130%;
+  color: #343847;
+}
+.WidgetCell {
+  display: flex;
+  align-items: center;
+  width: 485px;
+}
+.Button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 24px;
+  width: 113px;
+  height: 39px;
+  background: #3A60E8;
+  border-radius: 5px;
+}
+.ButtonText {
+  width: 65px;
+  height: 19px;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 130%;
+  color: #FBFBFB;
+}
+.WidgetCellTittle {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+  color: #343847;
+}
+.WidgetCellDescription {
+  width: 235px;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 130%;
+  color: #848897;
+  flex: none;
+  flex-grow: 0;
+}
+.TittleAndDescription {
+  margin: 0 51px 0 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.WidgetSelection {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.Line {
+  width: 485px;
+  height: 0;
+  border: 1px solid #BFBFD7;
+}

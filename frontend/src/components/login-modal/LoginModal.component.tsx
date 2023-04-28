@@ -1,11 +1,11 @@
 import React, {FunctionComponent} from 'react';
-import s from './login-modal.module.scss'
+import s from './login-modal.module.scss';
 import {Links} from "@assets/links/links";
 import { Icons } from '@/assets/components/export';
 import {useTypedSelector} from "@hooks/redux.useTypedSelector";
 
 export const LoginModal: FunctionComponent = () => {
-  const login = useTypedSelector((state) => state.LoginModal.login)
+  const login = useTypedSelector((state) => state.Modal.login)
 
   return (
     <div className={login ? `${s.Hidden} ${s.Background}` : s.Background}>
