@@ -1,103 +1,76 @@
-import datetime
-import functools
 import os
-import time
 
-import requests
-import tweepy
+from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
-from selenium.webdriver import DesiredCapabilities
-from selenium.webdriver.common.by import By
 
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+
+from .decorators import time_test
 TWEEPY_TOKEN = str(os.getenv('TWEEPY_TOKEN'))
 
 
-def time_test(func):
-    @functools.wraps(func)
-    def timeit_wrapper(*args, **kwargs):
-        start_time = time.perf_counter()
-        result = func(*args, **kwargs)
-        end_time = time.perf_counter()
-        total_time = end_time - start_time
-        print(f'Function {func.__name__}{args} {kwargs} Took {total_time:.4f} seconds')
-        return result
-    return timeit_wrapper
+options = webdriver.ChromeOptions()
+options.add_argument('--headless')
+options.add_argument('--disable-dev-shm-usage')
+options.add_argument('--no-sandbox')
+options.add_argument('--disable-extensions')
+options.add_argument('--disable-gpu')
+options.add_argument("--lang=en-US")
+driver = webdriver.Chrome(options=options)
+
+
+def scrape_tweet(current_elem, username):
+    tweets = []
+    try:
+        date = current_elem.find_element(By.XPATH, './/time').text
+    except:
+        date = '[empty]'
+
+    try:
+        text = current_elem.find_element(By.XPATH, './/div[@data-testid="tweetText"]').text
+    except:
+        text = '[empty]'
+
+    try:
+        retweet = current_elem.find_element(By.XPATH, './/div[@data-testid="retweet"]').text
+    except:
+        retweet = '[empty]'
+    try:
+        like = current_elem.find_element(By.XPATH, './/div[@data-testid="like"]').text
+    except:
+        like = '[empty]'
+    try:
+        reply = current_elem.find_element(By.XPATH, './/div[@data-testid="reply"]').text
+    except:
+        reply = '[empty]'
+
+    tweets.append({
+        'username': username,
+        'text': text,
+        'date': date,
+        'retweet': retweet,
+        'like': like,
+        'reply': reply
+    })
+
+    return tweets
 
 
 @time_test
 def get_tweets_from_username(username):
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
-    options.add_argument('--disable-dev-shm-usage')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-extensions')
-    options.add_argument('--disable-gpu')
 
     # driver = webdriver.Remote(desired_capabilities=DesiredCapabilities().CHROME,
     #                           command_executor="http://chrome:4444/wd/hub", options=options)
-    driver = webdriver.Chrome(options=options)
-
     url = f"https://twitter.com/{username}"
     driver.get(url)
-    tweets = []
+    current_element = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, '//div[@data-testid]//article[@data-testid="tweet"]'))
+    )
 
-    # Get scroll height after first time page load
-    last_height = driver.execute_script("return document.body.scrollHeight")
+    current_elem = scrape_tweet(current_element, username)
 
-    last_elem = ''
-    current_elem = ''
-    counter = 0
-    number = 2
-
-    while True:
-        # Scroll down to bottom
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        # Wait to load page
-        time.sleep(1)
-        # Calculate new scroll height and compare with last scroll height
-        new_height = driver.execute_script("return document.body.scrollHeight")
-        if new_height == last_height:
-            break
-        last_height = new_height
-
-        # update all_tweets to keep loop
-        all_tweets = driver.find_elements(By.XPATH, '//div[@data-testid]//article[@data-testid="tweet"]')
-
-        for item in all_tweets[1:]:  # skip tweet already scrapped
-
-            try:
-                date = item.find_element(By.XPATH, './/time').text
-            except:
-                date = '[empty]'
-
-            try:
-                text = item.find_element(By.XPATH, './/div[@data-testid="tweetText"]').text
-            except:
-                text = '[empty]'
-
-            # try:
-            #     replying_to = item.find_element(By.XPATH, './/div[contains(text(), "Replying to")]//a').text
-            # except:
-            #     replying_to = '[empty]'
-
-            # Append new tweets replies to tweet array
-            tweets.append([username, text, date])
-
-            if (last_elem == current_elem):
-                result = True
-            else:
-                last_elem = current_elem
-        if counter >= number:
-            break
-        counter += 1
-    return tweets
-
-
-
-
-
-
-
+    return current_elem
     # print(username)
     # auth = tweepy.Client(
     #     TWEEPY_TOKEN
