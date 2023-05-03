@@ -3,12 +3,6 @@ from django.contrib import admin
 from .models import (WidgetModel, WidgetsDiscordModel, WidgetsNoteModel,
                      WidgetsTwitterModel)
 
-# @admin.register(WidgetModel)
-# class WidgetAdmin(admin.ModelAdmin):
-#     list_display = (
-#         'uuid',
-#         'widget_tag',
-#     )
 
 
 @admin.register(WidgetsDiscordModel)

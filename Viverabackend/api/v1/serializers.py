@@ -42,6 +42,7 @@ class WidgetSerializer(serializers.ModelSerializer):
             'widget_size_y',
             'z_index',
             'is_collapsed',
+            'desktop',
         )
 
 
@@ -60,7 +61,8 @@ class WidgetsNoteSerializer(serializers.ModelSerializer):
             'widget_size_y',
             'z_index',
             'is_collapsed',
-            'text'
+            'text',
+            'desktop',
         )
 
 
@@ -79,7 +81,8 @@ class WidgetsTwitterSerializer(serializers.ModelSerializer):
             'widget_size_y',
             'z_index',
             'is_collapsed',
-            'tracked_name'
+            'tracked_name',
+            'desktop',
         )
 
 
@@ -98,7 +101,8 @@ class WidgetsDiscordSerializer(serializers.ModelSerializer):
             'widget_size_y',
             'z_index',
             'is_collapsed',
-            'tracked_server'
+            'tracked_server',
+            'desktop',
         )
 
 

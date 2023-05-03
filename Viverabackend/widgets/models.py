@@ -18,6 +18,7 @@ class WidgetModel(PolymorphicModel):
     widget_size_y = models.IntegerField()
     z_index = models.IntegerField()
     is_collapsed = models.BooleanField()
+    desktop = models.PositiveSmallIntegerField()
 
     class Meta:
         verbose_name = "Widget"

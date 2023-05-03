@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.utils.safestring import mark_safe
 
-from .models import BufferUserWidgetModel
+from .models import BufferUserWidgetModel, BufferUserSocketModel
 
 UserModel = get_user_model()
 
@@ -35,4 +35,12 @@ class BufferUserWidgetAdmin(admin.ModelAdmin):
         'uuid',
         'user_uuid',
         'widget_uuid',
+    )
+
+
+@admin.register(BufferUserSocketModel)
+class BufferUserSocketAdmin(admin.ModelAdmin):
+    list_display = (
+        'uuid',
+        'user_uuid',
     )
