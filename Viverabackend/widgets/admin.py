@@ -1,8 +1,15 @@
 from django.contrib import admin
 
-from .models import (WidgetModel, WidgetsDiscordModel, WidgetsNoteModel,
+from .models import (DesktopModel, WidgetsDiscordModel, WidgetsNoteModel,
                      WidgetsTwitterModel)
 
+
+@admin.register(DesktopModel)
+class DesktopModelAdmin(admin.ModelAdmin):
+    list_display = (
+        'uuid',
+        'user_uuid',
+    )
 
 
 @admin.register(WidgetsDiscordModel)

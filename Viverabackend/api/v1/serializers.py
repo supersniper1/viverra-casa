@@ -3,7 +3,7 @@ from rest_polymorphic.serializers import PolymorphicSerializer
 
 from users.models import UserModel
 from widgets.models import (WidgetModel, WidgetsDiscordModel, WidgetsNoteModel,
-                            WidgetsTwitterModel)
+                            WidgetsTwitterModel, DesktopModel)
 
 
 class TestSerializer(serializers.Serializer):
@@ -25,6 +25,13 @@ class AuthenticationSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = ('token',)
+
+
+class DesktopSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = DesktopModel
+        fields = ('desktop_name',)
 
 
 class WidgetSerializer(serializers.ModelSerializer):

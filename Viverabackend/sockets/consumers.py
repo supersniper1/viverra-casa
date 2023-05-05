@@ -7,8 +7,8 @@ from asgiref.sync import sync_to_async
 from dotenv import load_dotenv
 
 from api.v1.serializers import WidgetSerializer, WidgetsPolymorphicSerializer
-from users.models import BufferUserSocketModel, BufferUserWidgetModel
-from widgets.models import WidgetModel
+from users.models import BufferUserSocketModel
+from widgets.models import WidgetModel, DesktopModel
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
@@ -27,8 +27,6 @@ sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*', logger=T
 load_dotenv()
 
 logger = logging.getLogger(__name__)
-
-
 
 
 class WidgetNamespace(socketio.AsyncNamespace):
@@ -95,41 +93,34 @@ class WidgetNamespace(socketio.AsyncNamespace):
 
     async def on_get_all_widgets(self, sid, data):
         """get all widgets from current User"""
-        socket_session = await sync_to_async(BufferUserSocketModel.objects.select_related('user_uuid').get)(
-            socket_id=sid
-        )
-        widgets_buffer = await sync_to_async(
-            BufferUserWidgetModel.objects.filter
-        )(user_uuid=socket_session.user_uuid)
-
-        widgets = []
-        async for buffer in widgets_buffer:
-            buffer = model_to_dict(buffer)
-            widget = await sync_to_async(
-                WidgetModel.objects.get
-            )(uuid=buffer.get('widget_uuid'))
-
-            widget = change_widgetmodel_ptr_to_uuid(model_to_dict(widget))
-
-            widgets.append(widget)
-        await self.emit('get_all_widgets_answer', data=widgets, to=sid)
-
-    async def on_post_widget(self, sid, data):
-        """Create One Widget for current User"""
         try:
             socket_session = await sync_to_async(BufferUserSocketModel.objects.select_related('user_uuid').get)(
                 socket_id=sid
             )
+            user_desktop = await sync_to_async(
+                DesktopModel.objects.filter
+            )(user_uuid=socket_session.user_uuid)
+
+            widgets_queryset = await sync_to_async(WidgetModel.objects.filter)(desktop__in=user_desktop)
+
+            widgets = []
+            async for widget in widgets_queryset:
+                widgets.append(change_widgetmodel_ptr_to_uuid(model_to_dict(widget)))
+
+            await self.emit('get_all_widgets_answer', data=widgets, to=sid)
+
+        except Exception as ex:
+            await self.emit('error', data=str(ex), to=sid)
+
+    async def on_post_widget(self, sid, data):
+        """Create One Widget for current User"""
+        try:
             serializer = WidgetsPolymorphicSerializer(data=data)
-            serializer.is_valid(raise_exception=True)
+            await sync_to_async(serializer.is_valid)(raise_exception=True)
             data = await sync_to_async(serializer.save)()
 
-            await sync_to_async(BufferUserWidgetModel.objects.create)(
-                user_uuid=socket_session.user_uuid,
-                widget_uuid=data
-            )
-
             widget = change_widgetmodel_ptr_to_uuid(model_to_dict(data))
+
             await self.emit('post_widget_answer', data=widget, to=sid)
 
         except Exception as ex:
@@ -143,7 +134,7 @@ class WidgetNamespace(socketio.AsyncNamespace):
             )(uuid=data.get('widget_uuid'))
 
             serializer = WidgetsPolymorphicSerializer(widget, data=data, partial=True)
-            serializer.is_valid(raise_exception=True)
+            await sync_to_async(serializer.is_valid)(raise_exception=True)
             data = await sync_to_async(serializer.save)()
 
             widget = change_widgetmodel_ptr_to_uuid(model_to_dict(data))
@@ -167,7 +158,7 @@ class WidgetNamespace(socketio.AsyncNamespace):
         """Sand new tweets of user"""
         try:
             serializer = TestSerializer(data=data)
-            serializer.is_valid(raise_exception=True)
+            await sync_to_async(serializer.is_valid)(raise_exception=True)
             response = await sync_to_async(get_tweets_from_username)(
                 serializer.validated_data.get('username')
             )
@@ -177,7 +168,7 @@ class WidgetNamespace(socketio.AsyncNamespace):
 
 
 def change_widgetmodel_ptr_to_uuid(widget: dict) -> dict:
-    widget_uuid = widget.get('widgetmodel_ptr')
-    widget['widget_uuid'] = str(widget_uuid)
+    widget['widget_uuid'] = str(widget.get('widgetmodel_ptr'))
+    widget['desktop'] = str(widget.get('desktop'))
     widget.pop('widgetmodel_ptr')
     return widget

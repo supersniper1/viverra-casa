@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from dotenv import load_dotenv
 
 from users.models import UserModel
+from widgets.models import DesktopModel
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 load_dotenv(os.path.join(BASE_DIR / 'infra', '.env'))
@@ -27,6 +28,10 @@ class AuthenticationBackend(BaseBackend):
             return find_user
         except:
             new_user = UserModel.objects.create_user(discord_user)
+            DesktopModel.objects.create(
+                desktop_name='Default_desktop',
+                user_uuid_id=new_user.uuid
+            )
             return new_user
 
     def get_user(self, discord_id):

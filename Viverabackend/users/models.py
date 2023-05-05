@@ -4,8 +4,6 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
 
-from widgets.models import WidgetModel
-
 from .manager import UserOAuth2Manager
 
 
@@ -40,29 +38,6 @@ class UserModel(AbstractUser):
     @property
     def is_authenticated(self):
         return True
-
-
-class BufferUserWidgetModel(models.Model):
-    """This is Buffer models
-    for Buffering high load operations
-    """
-    uuid = models.UUIDField(
-        default=uuid.uuid4,
-        unique=True,
-        primary_key=True,
-        editable=False
-    )
-    user_uuid = models.ForeignKey(
-        UserModel,
-        on_delete=models.CASCADE,
-        related_name='buffer_user'
-    )
-
-    widget_uuid = models.OneToOneField(
-        WidgetModel,
-        on_delete=models.CASCADE,
-        related_name='buffer_widget',
-    )
 
 
 class BufferUserSocketModel(models.Model):

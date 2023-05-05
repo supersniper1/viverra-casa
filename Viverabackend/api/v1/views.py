@@ -5,15 +5,18 @@ import tweepy
 from adrf.decorators import api_view
 from asgiref.sync import sync_to_async
 from django.contrib.auth import login
+from django.shortcuts import get_object_or_404
 from dotenv import load_dotenv
 from rest_framework import status
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from adrf.views import APIView
 
 from .auth import AuthenticationBackend, get_user_from_token
-from .serializers import AuthenticationSerializer, TestSerializer
+from .serializers import AuthenticationSerializer, TestSerializer, DesktopSerializer
+from widgets.models import DesktopModel
 
 logging.basicConfig(
     filename='main.log',
@@ -121,3 +124,54 @@ async def discorduser(request):
         data=response,
         status=status.HTTP_200_OK
     )
+
+
+class Desktop(APIView):
+    permission_classes = [IsAuthenticated, ]
+
+    async def get(self, request):
+        queryset = await sync_to_async(
+            DesktopModel.objects.filter
+        )(user_uuid_id=request.user.uuid)
+        result = []
+
+        async for model in queryset:
+            result.append(
+                {
+                    'uuid': model.uuid,
+                    'desktop_name': model.desktop_name
+                }
+            )
+        result = {
+            "desktops": result
+        }
+        return Response(result, status=status.HTTP_200_OK)
+
+    async def post(self, request):
+        serializer = DesktopSerializer(data=request.data)
+        await sync_to_async(serializer.is_valid)(raise_exception=True)
+        serializer.validated_data['user_uuid_id'] = str(request.user.uuid)
+        await sync_to_async(serializer.save)()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class DesktopDetail(APIView):
+    permission_classes = [IsAuthenticated, ]
+
+    async def patch(self, request, desktop_uuid):
+        desktop_obj = await sync_to_async(get_object_or_404)(DesktopModel, uuid=desktop_uuid)
+        serializer = DesktopSerializer(desktop_obj, data=request.data, partial=True)
+        await sync_to_async(serializer.is_valid)(raise_exception=True)
+        serializer.validated_data['user_uuid_id'] = str(request.user.uuid)
+        await sync_to_async(serializer.save)()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    async def delete(self, request, desktop_uuid):
+        desktop_obj = await sync_to_async(get_object_or_404)(DesktopModel, uuid=desktop_uuid)
+
+        await sync_to_async(desktop_obj.delete)()
+        message = {
+            "message": 'Successfully removed'
+        }
+
+        return Response(message, status=status.HTTP_204_NO_CONTENT)
