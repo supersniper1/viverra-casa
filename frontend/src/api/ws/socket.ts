@@ -1,10 +1,21 @@
-import { io, Socket } from "socket.io-client";
+import {io, Socket} from "socket.io-client";
 
 export const socket: Socket = io(
-  process.env.NODE_ENV === "production" ? "/ws/" : "http://127.0.0.1:8000/ws/",
+  process.env.NODE_ENV === "production" ? "/widget/" : "http://sovraska.ru/widget",
   {
+    transportOptions: {
+      polling: {
+        extraHeaders: {
+          Authorization:
+            `Bearer ${localStorage.getItem("access-token")}`
+        }
+      }
+    },
     forceNew: true,
     timeout: 10000,
-    rejectUnauthorized: false
+    rejectUnauthorized: false,
+    autoConnect: false,
+    reconnection: false,
+    transports: ['polling', 'flashsocket']
   }
 );

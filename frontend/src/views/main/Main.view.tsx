@@ -1,25 +1,38 @@
-import React, {FunctionComponent, useEffect} from 'react';
-import {Square} from "@components/square/square.component";
-import {Buttons} from "@components/buttons/buttons.component";
-import {Icons} from "@assets/components/export";
+import React, {FunctionComponent, useMemo} from 'react';
+import { Component } from '@components/export.components';
 import {socket} from "@/api/ws/socket";
+import {useActions} from "@hooks/redux.useActions";
 
 export const Main: FunctionComponent = () => {
-  useEffect(() => {
-    socket.on('connect', () => {
-      console.log('connected')
-    });
-    socket.on('disconnect', () => {
-      console.log('disconected')
-    });
-  }, []);
+  const {
+    WidgetsRefreshList,
+    Logout,
+    Login,
+  } = useActions()
+
+  useMemo(() => {
+    if (localStorage.getItem("access-token")) {
+      socket.connect()
+      socket.on("connect", () => {
+        console.log('connect')
+        Login()
+      });
+      socket.emit("get_all_widgets", null)
+      socket.on("message", (message: any) => {
+        console.log(message)
+      })
+      socket.on("error", (error: any) => {
+        console.log(error)
+        Logout()
+      })
+      socket.on("get_all_widgets_answer", (message: any) => {
+        WidgetsRefreshList(message)
+      })
+    }}, []);
 
   return (
     <div>
-      MainPage
-      <Icons.Login/>
-      <Square/>
-      <Buttons/>
+      <Component.Workspace/>
     </div>
   );
 };

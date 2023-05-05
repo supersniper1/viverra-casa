@@ -54,10 +54,12 @@ const config = {
     resolve: {
         alias: {
             "@": path.resolve(__dirname, "src"),
+            "@api": path.resolve(__dirname, "src/api/"),
             "@assets": path.resolve(__dirname, "src/assets/"),
             "@components": path.resolve(__dirname, "src/components/"),
             "@hooks": path.resolve(__dirname, "src/hooks/"),
             "@store": path.resolve(__dirname, "src/store/"),
+            "@ui": path.resolve(__dirname, "src/ui/"),
             "@views": path.resolve(__dirname, "src/views/"),
         },
         extensions: [".tsx", ".ts", ".jsx", ".js", ".scss", "..."],

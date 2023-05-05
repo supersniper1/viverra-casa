@@ -1,0 +1,79 @@
+.Background {
+  position: absolute;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  background: #131313;
+  opacity: 0.8;
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: all;
+}
+.ModalWindow {
+  width: 411px;
+  height: 248px;
+  background: #FBFBFB;
+  border: 1px solid #BFBFD7;
+  border-radius: 15px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.Hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.Logo {
+  width: 202px;
+  height: 42px;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 130%;
+  color: #343847;
+}
+.LogoSecondColor {
+  color: #3A60E8;
+}
+.Description {
+  width: 291px;
+  height: 42px;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 130%;
+  text-align: center;
+  color: #848897;
+  margin-top: 10px;
+}
+.Button {
+  display: flex;
+  align-items: center;
+  padding: 10px 24px;
+  gap: 10px;
+  width: 239px;
+  height: 44px;
+  background: #5B65EA;
+  border-radius: 5px;
+  margin-top: 28px;
+}
+.ButtonText {
+  width: 159px;
+  height: 19px;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 130%;
+  color: #FBFBFB;
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}

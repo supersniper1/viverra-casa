@@ -11,12 +11,14 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@components/*": ["./src/components/*"],
+      "@api/*": ["./src/api/*"],
       "@assets/*": ["./src/assets/*"],
+      "@components/*": ["./src/components/*"],
       "@hooks/*": ["./src/hooks/*"],
       "@store/*": ["./src/store/*"],
+      "@ui/*": ["./src/ui/*"],
       "@views/*": ["./src/views/*"]
     }
   },
-  "files": ["src/index.tsx"]
+  "include": ["./ext.d.ts", "src", "./src/index.tsx"]
 }
