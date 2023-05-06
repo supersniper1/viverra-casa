@@ -166,12 +166,14 @@ class DesktopDetail(APIView):
         await sync_to_async(serializer.save)()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
     async def delete(self, request, desktop_uuid):
         desktop_obj = await sync_to_async(get_object_or_404)(DesktopModel, uuid=desktop_uuid)
 
         await sync_to_async(desktop_obj.delete)()
+
         message = {
             "message": 'Successfully removed'
         }
 
-        return Response(message, status=status.HTTP_204_NO_CONTENT)
+        return Response(data=message, status=status.HTTP_201_CREATED)
