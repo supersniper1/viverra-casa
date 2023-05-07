@@ -2,6 +2,7 @@ import React, {FunctionComponent, useMemo} from 'react';
 import { Component } from '@components/export.components';
 import {socket} from "@/api/ws/socket";
 import {useActions} from "@hooks/redux.useActions";
+import s from './main.module.scss'
 
 export const Main: FunctionComponent = () => {
   const {
@@ -23,6 +24,7 @@ export const Main: FunctionComponent = () => {
       })
       socket.on("error", (error: any) => {
         console.log(error)
+        localStorage.clear()
         Logout()
       })
       socket.on("get_all_widgets_answer", (message: any) => {
@@ -31,7 +33,8 @@ export const Main: FunctionComponent = () => {
     }}, []);
 
   return (
-    <div>
+    <div className={s.Main}>
+      <Component.Sidebar/>
       <Component.Workspace/>
     </div>
   );

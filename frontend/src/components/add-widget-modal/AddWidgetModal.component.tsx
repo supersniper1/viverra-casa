@@ -22,7 +22,8 @@ export const AddWidgetModal: FunctionComponent = () => {
     "z_index": 1,
     "is_collapsed": false,
     "text": "test text",
-    "resourcetype": "WidgetsNoteModel"
+    "resourcetype": "WidgetsNoteModel",
+    "desktop": 1,
   }
 
   const postWidget = () => {
