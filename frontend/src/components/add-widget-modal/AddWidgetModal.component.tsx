@@ -29,7 +29,7 @@ export const AddWidgetModal: FunctionComponent = () => {
   const postWidget = () => {
     socket.emit("post_widget", notesObj)
     socket.emit("get_all_widgets", null)
-    socket.on("get_all_widgets_answer", (message: any) => {
+    socket.on("get_all_widgets_answer", (message: []) => {
       WidgetsRefreshList(message)
     })
   }
