@@ -4,25 +4,28 @@ import os
 import jwt
 import socketio
 from asgiref.sync import sync_to_async
+from django.forms.models import model_to_dict
 from dotenv import load_dotenv
 
-from api.v1.serializers import WidgetSerializer, WidgetsPolymorphicSerializer
+from api.v1.serializers import TestSerializer, WidgetsPolymorphicSerializer
 from users.models import BufferUserSocketModel
-from widgets.models import WidgetModel, DesktopModel
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
-
-import django
-from django.forms.models import model_to_dict
-
-django.setup()
-
-from api.v1.serializers import TestSerializer
+from widgets.models import DesktopModel, WidgetModel
 
 from .middleware import create_response, socket_authentication
 from .tweets import get_tweets_from_username
 
-sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*', logger=True, engineio_logger=False)
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
+
+import django
+
+django.setup()
+
+sio = socketio.AsyncServer(
+    async_mode='asgi',
+    cors_allowed_origins='*',
+    logger=True,
+    engineio_logger=False
+)
 
 load_dotenv()
 
@@ -43,7 +46,7 @@ class WidgetNamespace(socketio.AsyncNamespace):
                 discord_user = await socket_authentication(bearer_payload)
                 if discord_user is None:
                     response = create_response(
-                        f"", 400, {"message": "User Not Found"}
+                        "", 400, {"message": "User Not Found"}
                     )
                     logger.info(f"Response {response}")
 
@@ -57,7 +60,11 @@ class WidgetNamespace(socketio.AsyncNamespace):
                 await self.emit('connect_answer', data='Connected', to=sid)
             else:
                 response = create_response(
-                    f"", 401, {"message": "Authorization not found, Please send valid token in headers"}
+                    "",
+                    401,
+                    {
+                        "message": "Authorization not found, Please send valid token in headers"
+                    }
                 )
                 logger.info(f"Response {response}")
 
@@ -65,14 +72,20 @@ class WidgetNamespace(socketio.AsyncNamespace):
                 await self.emit('disconnect')
 
         except jwt.ExpiredSignatureError:
-            response = create_response(f"", 401, {"message": "Authentication token has expired"})
+            response = create_response("", 401, {"message": "Authentication token has expired"})
             logger.info(f"Response {response}")
 
             await self.emit('error', data=response, to=sid)
             await self.emit('disconnect')
 
         except (jwt.DecodeError, jwt.InvalidTokenError):
-            response = create_response(f"", 401, {"message": "Authorization has failed, Please send valid token."})
+            response = create_response(
+                "",
+                401,
+                {
+                    "message": "Authorization has failed, Please send valid token."
+                }
+            )
             logger.info(f"Response {response}")
             await self.emit('error', data=response, to=sid)
             await self.emit('disconnect')
@@ -86,7 +99,9 @@ class WidgetNamespace(socketio.AsyncNamespace):
     async def on_disconnect(self, sid):
         """on Disconnect Destroy session object"""
         logger.info('User with sid: %s has been disconnected.', sid)
-        socket_session = await sync_to_async(BufferUserSocketModel.objects.get)(
+        socket_session = await sync_to_async(
+            BufferUserSocketModel.objects.get
+        )(
             socket_id=sid
         )
         await sync_to_async(socket_session.delete)()
@@ -94,18 +109,26 @@ class WidgetNamespace(socketio.AsyncNamespace):
     async def on_get_all_widgets(self, sid, data):
         """get all widgets from current User"""
         try:
-            socket_session = await sync_to_async(BufferUserSocketModel.objects.select_related('user_uuid').get)(
+            socket_session = await sync_to_async(
+                BufferUserSocketModel.objects.select_related('user_uuid').get
+            )(
                 socket_id=sid
             )
             user_desktop = await sync_to_async(
                 DesktopModel.objects.filter
             )(user_uuid=socket_session.user_uuid)
 
-            widgets_queryset = await sync_to_async(WidgetModel.objects.filter)(desktop__in=user_desktop)
+            widgets_queryset = await sync_to_async(
+                WidgetModel.objects.filter
+            )(desktop__in=user_desktop)
 
             widgets = []
             async for widget in widgets_queryset:
-                widgets.append(change_widgetmodel_ptr_to_uuid(model_to_dict(widget)))
+                widgets.append(
+                    change_widgetmodel_ptr_to_uuid(
+                        model_to_dict(widget)
+                    )
+                )
 
             await self.emit('get_all_widgets_answer', data=widgets, to=sid)
 

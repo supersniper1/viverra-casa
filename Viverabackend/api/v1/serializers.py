@@ -2,8 +2,8 @@ from rest_framework import serializers
 from rest_polymorphic.serializers import PolymorphicSerializer
 
 from users.models import UserModel
-from widgets.models import (WidgetModel, WidgetsDiscordModel, WidgetsNoteModel,
-                            WidgetsTwitterModel, DesktopModel)
+from widgets.models import (DesktopModel, WidgetModel, WidgetsDiscordModel,
+                            WidgetsNoteModel, WidgetsTwitterModel)
 
 
 class TestSerializer(serializers.Serializer):
@@ -25,6 +25,16 @@ class AuthenticationSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = ('token',)
+
+
+class RefreshSerializer(serializers.ModelSerializer):
+    """Create Discord user from token or authorize"""
+    token = serializers.CharField()
+
+    class Meta:
+        model = UserModel
+        fields = ('token',)
+
 
 
 class DesktopSerializer(serializers.ModelSerializer):

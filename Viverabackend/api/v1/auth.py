@@ -4,6 +4,7 @@ from pathlib import Path
 import httpx
 from django.contrib.auth.backends import BaseBackend
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from dotenv import load_dotenv
 
@@ -24,9 +25,12 @@ class AuthenticationBackend(BaseBackend):
     """
     def authenticate(self, discord_user=None) -> UserModel:
         try:
-            find_user = get_object_or_404(UserModel, discord_id=discord_user.get('id'))
+            find_user = get_object_or_404(
+                UserModel,
+                discord_id=discord_user.get('id')
+            )
             return find_user
-        except:
+        except Http404:
             new_user = UserModel.objects.create_user(discord_user)
             DesktopModel.objects.create(
                 desktop_name='Default_desktop',
@@ -72,5 +76,4 @@ async def get_user_from_token(token: str) -> UserModel:
                 'https://discord.com/api/v9/users/@me',
                 headers={"Authorization": "Bearer %s" % access_token}
         )
-        user = response.json()
-        return user
+        return response.json()

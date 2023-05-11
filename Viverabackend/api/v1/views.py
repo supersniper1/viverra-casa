@@ -3,6 +3,7 @@ import os
 
 import tweepy
 from adrf.decorators import api_view
+from adrf.views import APIView
 from asgiref.sync import sync_to_async
 from django.contrib.auth import login
 from django.shortcuts import get_object_or_404
@@ -12,11 +13,12 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from adrf.views import APIView
+
+from widgets.models import DesktopModel
 
 from .auth import AuthenticationBackend, get_user_from_token
-from .serializers import AuthenticationSerializer, TestSerializer, DesktopSerializer
-from widgets.models import DesktopModel
+from .serializers import (AuthenticationSerializer, DesktopSerializer,
+                          TestSerializer, RefreshSerializer)
 
 logging.basicConfig(
     filename='main.log',
@@ -159,16 +161,25 @@ class DesktopDetail(APIView):
     permission_classes = [IsAuthenticated, ]
 
     async def patch(self, request, desktop_uuid):
-        desktop_obj = await sync_to_async(get_object_or_404)(DesktopModel, uuid=desktop_uuid)
-        serializer = DesktopSerializer(desktop_obj, data=request.data, partial=True)
+        desktop_obj = await sync_to_async(
+            get_object_or_404
+        )(DesktopModel, uuid=desktop_uuid)
+
+        serializer = DesktopSerializer(
+            desktop_obj,
+            data=request.data,
+            partial=True
+        )
+
         await sync_to_async(serializer.is_valid)(raise_exception=True)
         serializer.validated_data['user_uuid_id'] = str(request.user.uuid)
         await sync_to_async(serializer.save)()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-
     async def delete(self, request, desktop_uuid):
-        desktop_obj = await sync_to_async(get_object_or_404)(DesktopModel, uuid=desktop_uuid)
+        desktop_obj = await sync_to_async(
+            get_object_or_404
+        )(DesktopModel, uuid=desktop_uuid)
 
         await sync_to_async(desktop_obj.delete)()
 

@@ -2,6 +2,7 @@ import uuid
 
 from django.db import models
 from polymorphic.models import PolymorphicModel
+
 from users.models import UserModel
 
 

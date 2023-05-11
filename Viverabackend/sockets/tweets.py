@@ -1,12 +1,13 @@
 import os
 
-from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
-
+from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
 from .decorators import time_test
+
 TWEEPY_TOKEN = str(os.getenv('TWEEPY_TOKEN'))
 
 
@@ -24,25 +25,25 @@ def scrape_tweet(current_elem, username):
     tweets = []
     try:
         date = current_elem.find_element(By.XPATH, './/time').text
-    except:
+    except NoSuchElementException:
         date = '[empty]'
 
     try:
         text = current_elem.find_element(By.XPATH, './/div[@data-testid="tweetText"]').text
-    except:
+    except NoSuchElementException:
         text = '[empty]'
 
     try:
         retweet = current_elem.find_element(By.XPATH, './/div[@data-testid="retweet"]').text
-    except:
+    except NoSuchElementException:
         retweet = '[empty]'
     try:
         like = current_elem.find_element(By.XPATH, './/div[@data-testid="like"]').text
-    except:
+    except NoSuchElementException:
         like = '[empty]'
     try:
         reply = current_elem.find_element(By.XPATH, './/div[@data-testid="reply"]').text
-    except:
+    except NoSuchElementException:
         reply = '[empty]'
 
     tweets.append({
@@ -65,7 +66,7 @@ def get_tweets_from_username(username):
     url = f"https://twitter.com/{username}"
     driver.get(url)
     current_element = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.XPATH, '//div[@data-testid]//article[@data-testid="tweet"]'))
+        ec.presence_of_element_located((By.XPATH, '//div[@data-testid]//article[@data-testid="tweet"]'))
     )
 
     current_elem = scrape_tweet(current_element, username)

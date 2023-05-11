@@ -38,16 +38,21 @@ def create_response(request_id, code, message):
 
 async def socket_authentication(jwt_token):
     """
-    Custom middleware handler to check authentication for a user with JWT authentication
+    Custom middleware handler to check authentication
+    for a user with JWT authentication
     :param jwt_token: jwt Bearer token
     :type jwt_token: bytearray
     :return: discord_user
     """
     jwt_token = jwt_token[7:]
 
-    payload = jwt.decode(jwt=jwt_token, key=settings.SECRET_KEY, algorithms=['HS256'])
+    payload = jwt.decode(
+        jwt=jwt_token, key=settings.SECRET_KEY, algorithms=['HS256']
+    )
 
     user_uuid = payload.get('user_id').replace('-', '')
 
-    discord_user = await sync_to_async(get_object_or_404)(UserModel, uuid=user_uuid)
+    discord_user = await sync_to_async(
+        get_object_or_404
+    )(UserModel, uuid=user_uuid)
     return discord_user
