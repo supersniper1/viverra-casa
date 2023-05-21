@@ -46,20 +46,6 @@ const config = {
                 test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
                 type: 'asset',
             },
-            {
-                test: /\.(ts|tsx)$/,
-                enforce: 'pre',
-                use: [
-                    {
-                        options: {
-                            eslintPath: require.resolve('eslint'),
-
-                        },
-                        loader: require.resolve('eslint-loader'),
-                    },
-                ],
-                exclude: /node_modules/,
-            },
 
             // Add your rules for custom modules here
             // Learn more about loaders from https://webpack.js.org/loaders/
