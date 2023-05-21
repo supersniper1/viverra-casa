@@ -5,6 +5,7 @@ from polymorphic.models import PolymorphicModel
 
 from users.models import UserModel
 
+
 class DesktopModel(models.Model):
     """
     This is Desktop models
@@ -23,6 +24,25 @@ class DesktopModel(models.Model):
         related_name='buffer_user'
     )
     desktop_name = models.CharField(max_length=100)
+
+
+class FolderModel(models.Model):
+    """
+    This is Folder model
+    For keep widgets in
+    """
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        primary_key=True,
+        editable=False
+    )
+    user_uuid = models.ForeignKey(
+        UserModel,
+        on_delete=models.CASCADE,
+        related_name='folder_user'
+    )
+    folder_name = models.CharField(max_length=100, null=True, blank=True)
 
 
 class WidgetModel(PolymorphicModel):
@@ -44,28 +64,15 @@ class WidgetModel(PolymorphicModel):
         on_delete=models.CASCADE,
         related_name='desktop_widget',
     )
+    folder = models.ForeignKey(
+        FolderModel,
+        on_delete=models.CASCADE,
+        related_name='folder_widget'
+    )
 
     class Meta:
         verbose_name = "Widget"
         verbose_name_plural = "all_Widgets"
-
-
-class FolderModel(models.Model):
-    """
-    This is Folder model
-    For keep widgets in
-    """
-    uuid = models.UUIDField(
-        default=uuid.uuid4,
-        unique=True,
-        primary_key=True,
-        editable=False
-    )
-    widget_uuid = models.ForeignKey(
-        WidgetModel,
-        on_delete=models.CASCADE,
-        related_name='widgets'
-    )
 
 
 class WidgetsDiscordModel(WidgetModel):

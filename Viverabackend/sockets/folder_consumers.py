@@ -4,6 +4,7 @@ import os
 import jwt
 import socketio
 from asgiref.sync import sync_to_async
+from django.contrib.auth import get_user_model
 from django.forms.models import model_to_dict
 from dotenv import load_dotenv
 
@@ -31,6 +32,7 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
+UserModel = get_user_model()
 
 class FolderNamespace(socketio.AsyncNamespace):
     """Folder Namespace"""
@@ -121,32 +123,37 @@ class FolderNamespace(socketio.AsyncNamespace):
             widgets_queryset = await sync_to_async(
                 WidgetModel.objects.filter
             )(desktop__in=user_desktop)
-
             folders_queryset = await sync_to_async(
                 FolderModel.objects.filter
-            )(widget_uuid__in=widgets_queryset)
+            )(folder_widget__in=widgets_queryset)
 
-            widgets = []
-            async for widget in folders_queryset:
-                widgets.append(
-                    change_foldermodel_ptr_to_uuid(
-                        model_to_dict(widget)
-                    )
+            folders = []
+            async for folder in folders_queryset:
+                folders.append(
+                    str(folder.uuid)
                 )
-
-            await self.emit('get_all_folders_answer', data=widgets, to=sid)
+            await self.emit('get_all_folders_answer', data=folders, to=sid)
 
         except Exception as ex:
             await self.emit('error', data=str(ex), to=sid)
 
-    async def on_post_widget(self, sid, data):
+    async def on_post_folder(self, sid, data):
         """Create One Widget for current User"""
         try:
+            socket_session = await sync_to_async(
+                BufferUserSocketModel.objects.select_related('user_uuid').get
+            )(
+                socket_id=sid
+            )
+            data['user_uuid'] = socket_session.user_uuid.uuid
+
             serializer = FolderSerializer(data=data)
+
             await sync_to_async(serializer.is_valid)(raise_exception=True)
+
             data = await sync_to_async(serializer.save)()
 
-            widget = change_foldermodel_ptr_to_uuid(model_to_dict(data))
+            widget = change_widget_uuid_to_str(model_to_dict(data))
 
             await self.emit('post_folder_answer', data=widget, to=sid)
 
@@ -164,7 +171,7 @@ class FolderNamespace(socketio.AsyncNamespace):
             await sync_to_async(serializer.is_valid)(raise_exception=True)
             data = await sync_to_async(serializer.save)()
 
-            widget = change_foldermodel_ptr_to_uuid(model_to_dict(data))
+            widget = change_widget_uuid_to_str(model_to_dict(data))
             await self.emit('update_widget_answer', data=widget, to=sid)
         except Exception as ex:
             await self.emit('error', data=str(ex), to=sid)
@@ -182,8 +189,6 @@ class FolderNamespace(socketio.AsyncNamespace):
             await self.emit('error', data=str(ex), to=sid)
 
 
-def change_foldermodel_ptr_to_uuid(widget: dict) -> dict:
-    widget['widget_uuid'] = str(widget.get('widgetmodel_ptr'))
-    # widget['desktop'] = str(widget.get('desktop'))
-    widget.pop('widgetmodel_ptr')
+def change_widget_uuid_to_str(widget: dict) -> dict:
+    widget['widget_uuid'] = str(widget.get('widget_uuid'))
     return widget

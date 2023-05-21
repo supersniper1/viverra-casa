@@ -47,7 +47,7 @@ class FolderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FolderModel
-        fields = ('widget_uuid',)
+        fields = ('folder_name', 'user_uuid')
 
 
 class WidgetSerializer(serializers.ModelSerializer):

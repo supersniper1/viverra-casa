@@ -124,11 +124,13 @@ class WidgetNamespace(socketio.AsyncNamespace):
 
             widgets = []
             async for widget in widgets_queryset:
+                print(widget.uuid)
                 widgets.append(
                     change_widgetmodel_ptr_to_uuid(
                         model_to_dict(widget)
                     )
                 )
+
 
             await self.emit('get_all_widgets_answer', data=widgets, to=sid)
 
