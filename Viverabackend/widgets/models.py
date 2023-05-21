@@ -5,7 +5,6 @@ from polymorphic.models import PolymorphicModel
 
 from users.models import UserModel
 
-
 class DesktopModel(models.Model):
     """
     This is Desktop models
@@ -51,6 +50,24 @@ class WidgetModel(PolymorphicModel):
         verbose_name_plural = "all_Widgets"
 
 
+class FolderModel(models.Model):
+    """
+    This is Folder model
+    For keep widgets in
+    """
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        primary_key=True,
+        editable=False
+    )
+    widget_uuid = models.ForeignKey(
+        WidgetModel,
+        on_delete=models.CASCADE,
+        related_name='widgets'
+    )
+
+
 class WidgetsDiscordModel(WidgetModel):
     tracked_server = models.CharField(max_length=100)
 
@@ -73,3 +90,6 @@ class WidgetsNoteModel(WidgetModel):
     class Meta:
         verbose_name = "Note Widget"
         verbose_name_plural = "Note Widgets"
+
+
+

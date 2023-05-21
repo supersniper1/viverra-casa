@@ -3,7 +3,7 @@ from rest_polymorphic.serializers import PolymorphicSerializer
 
 from users.models import UserModel
 from widgets.models import (DesktopModel, WidgetModel, WidgetsDiscordModel,
-                            WidgetsNoteModel, WidgetsTwitterModel)
+                            WidgetsNoteModel, WidgetsTwitterModel, FolderModel)
 
 
 class TestSerializer(serializers.Serializer):
@@ -36,12 +36,18 @@ class RefreshSerializer(serializers.ModelSerializer):
         fields = ('token',)
 
 
-
 class DesktopSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DesktopModel
         fields = ('desktop_name',)
+
+
+class FolderSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = FolderModel
+        fields = ('widget_uuid',)
 
 
 class WidgetSerializer(serializers.ModelSerializer):

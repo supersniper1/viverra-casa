@@ -18,7 +18,7 @@ from widgets.models import DesktopModel
 
 from .auth import AuthenticationBackend, get_user_from_token
 from .serializers import (AuthenticationSerializer, DesktopSerializer,
-                          TestSerializer, RefreshSerializer)
+                          TestSerializer)
 
 logging.basicConfig(
     filename='main.log',
@@ -150,6 +150,7 @@ class Desktop(APIView):
         return Response(result, status=status.HTTP_200_OK)
 
     async def post(self, request):
+        """TODO: 4 desktops"""
         serializer = DesktopSerializer(data=request.data)
         await sync_to_async(serializer.is_valid)(raise_exception=True)
         serializer.validated_data['user_uuid_id'] = str(request.user.uuid)
