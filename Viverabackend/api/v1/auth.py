@@ -32,6 +32,7 @@ class AuthenticationBackend(BaseBackend):
             return find_user
         except Http404:
             new_user = UserModel.objects.create_user(discord_user)
+
             DesktopModel.objects.create(
                 desktop_name='Default_desktop',
                 user_uuid_id=new_user.uuid

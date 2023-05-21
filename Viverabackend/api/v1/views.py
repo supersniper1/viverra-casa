@@ -19,6 +19,7 @@ from widgets.models import DesktopModel
 from .auth import AuthenticationBackend, get_user_from_token
 from .serializers import (AuthenticationSerializer, DesktopSerializer,
                           TestSerializer)
+from .utils import is_desktop_can_exist
 
 logging.basicConfig(
     filename='main.log',
@@ -150,12 +151,14 @@ class Desktop(APIView):
         return Response(result, status=status.HTTP_200_OK)
 
     async def post(self, request):
-        """TODO: 4 desktops"""
         serializer = DesktopSerializer(data=request.data)
         await sync_to_async(serializer.is_valid)(raise_exception=True)
         serializer.validated_data['user_uuid_id'] = str(request.user.uuid)
-        await sync_to_async(serializer.save)()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        is_desktop = await sync_to_async(is_desktop_can_exist)(request.user.uuid)
+        if is_desktop:
+            await sync_to_async(serializer.save)()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response('The desktop limit has been reached', status=status.HTTP_200_OK)
 
 
 class DesktopDetail(APIView):
