@@ -1,0 +1,29 @@
+.Sidebar {
+  width: 300px;
+  height: 100%;
+  background: #FBFBFB;
+  padding: 60px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+}
+.Logo {
+  width: 199px;
+  height: 39px;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 39px;
+  letter-spacing: -0.01em;
+  color: #343847;
+}
+.LogoSecondColor {
+  color: #3A60E8;
+}
+.Top {
+  height: 50%;
+}
+.Bottom {
+  height: 50%;
+}
