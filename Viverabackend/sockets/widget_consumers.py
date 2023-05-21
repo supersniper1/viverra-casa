@@ -195,5 +195,6 @@ class WidgetNamespace(socketio.AsyncNamespace):
 def change_widgetmodel_ptr_to_uuid(widget: dict) -> dict:
     widget['widget_uuid'] = str(widget.get('widgetmodel_ptr'))
     widget['desktop'] = str(widget.get('desktop'))
+    widget['folder'] = str(widget.get('folder'))
     widget.pop('widgetmodel_ptr')
     return widget

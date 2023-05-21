@@ -116,21 +116,17 @@ class FolderNamespace(socketio.AsyncNamespace):
                 socket_id=sid
             )
 
-            user_desktop = await sync_to_async(
-                DesktopModel.objects.filter
+            user_folders = await sync_to_async(
+                FolderModel.objects.filter
             )(user_uuid=socket_session.user_uuid)
 
-            widgets_queryset = await sync_to_async(
-                WidgetModel.objects.filter
-            )(desktop__in=user_desktop)
-            folders_queryset = await sync_to_async(
-                FolderModel.objects.filter
-            )(folder_widget__in=widgets_queryset)
-
             folders = []
-            async for folder in folders_queryset:
+            async for folder in user_folders:
                 folders.append(
-                    str(folder.uuid)
+                    {
+                        "uuid": str(folder.uuid),
+                        "folder_name": folder.folder_name
+                    }
                 )
             await self.emit('get_all_folders_answer', data=folders, to=sid)
 
@@ -145,11 +141,12 @@ class FolderNamespace(socketio.AsyncNamespace):
             )(
                 socket_id=sid
             )
-            data['user_uuid'] = socket_session.user_uuid.uuid
 
             serializer = FolderSerializer(data=data)
-
             await sync_to_async(serializer.is_valid)(raise_exception=True)
+            serializer.validated_data['user_uuid'] = socket_session.user_uuid
+            print(data)
+
 
             data = await sync_to_async(serializer.save)()
 
@@ -160,31 +157,31 @@ class FolderNamespace(socketio.AsyncNamespace):
         except Exception as ex:
             await self.emit('error', data=str(ex), to=sid)
 
-    async def on_update_widget(self, sid, data):
+    async def on_update_folder(self, sid, data):
         """Update One Widget for current User"""
         try:
-            widget = await sync_to_async(
-                WidgetModel.objects.get
-            )(uuid=data.get('widget_uuid'))
-
-            serializer = WidgetsPolymorphicSerializer(widget, data=data, partial=True)
+            folder = await sync_to_async(
+                FolderModel.objects.get
+            )(uuid=data.get('folder_uuid'))
+            serializer = FolderSerializer(folder, data=data, partial=True)
             await sync_to_async(serializer.is_valid)(raise_exception=True)
             data = await sync_to_async(serializer.save)()
 
-            widget = change_widget_uuid_to_str(model_to_dict(data))
-            await self.emit('update_widget_answer', data=widget, to=sid)
+            folder = model_to_dict(data)
+            folder.pop('user_uuid')
+            await self.emit('update_folder_answer', data=folder, to=sid)
         except Exception as ex:
             await self.emit('error', data=str(ex), to=sid)
 
-    async def on_delete_widget(self, sid, data):
-        """Delete One Widget for current User"""
+    async def on_delete_folder(self, sid, data):
+        """Delete One folder for current User"""
         try:
-            uuid = str(data.get('widget_uuid'))
-            data = await sync_to_async(WidgetModel.objects.get)(uuid=uuid)
+            uuid = str(data.get('folder_uuid'))
+            data = await sync_to_async(FolderModel.objects.get)(uuid=uuid)
             await sync_to_async(data.delete)()
 
-            response = "widget was successfully deleted"
-            await self.emit('delete_widget_answer', data=response, to=sid)
+            response = "folder was successfully deleted"
+            await self.emit('delete_folder_answer', data=response, to=sid)
         except Exception as ex:
             await self.emit('error', data=str(ex), to=sid)
 

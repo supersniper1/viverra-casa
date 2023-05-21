@@ -47,7 +47,7 @@ class FolderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FolderModel
-        fields = ('folder_name', 'user_uuid')
+        fields = ('folder_name', )
 
 
 class WidgetSerializer(serializers.ModelSerializer):
@@ -66,6 +66,7 @@ class WidgetSerializer(serializers.ModelSerializer):
             'z_index',
             'is_collapsed',
             'desktop',
+            'folder',
         )
 
 
@@ -86,6 +87,7 @@ class WidgetsNoteSerializer(serializers.ModelSerializer):
             'is_collapsed',
             'text',
             'desktop',
+            'folder',
         )
 
 
@@ -106,6 +108,7 @@ class WidgetsTwitterSerializer(serializers.ModelSerializer):
             'is_collapsed',
             'tracked_name',
             'desktop',
+            'folder',
         )
 
 
@@ -126,6 +129,7 @@ class WidgetsDiscordSerializer(serializers.ModelSerializer):
             'is_collapsed',
             'tracked_server',
             'desktop',
+            'folder',
         )
 
 
