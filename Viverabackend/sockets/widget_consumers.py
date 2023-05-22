@@ -208,7 +208,9 @@ class WidgetNamespace(socketio.AsyncNamespace):
             folders = []
             async for folder in user_folders:
                 folders.append(
-                    dict_items_to_str(model_to_dict(folder))
+                    {
+                        "uuid": str(folder.uuid)
+                    }
                 )
             print(folders)
             await self.emit('get_all_folders_answer', data=folders, to=sid)
