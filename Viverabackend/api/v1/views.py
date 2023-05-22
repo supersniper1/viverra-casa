@@ -158,7 +158,10 @@ class Desktop(APIView):
         if is_desktop:
             await sync_to_async(serializer.save)()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response('The desktop limit has been reached', status=status.HTTP_200_OK)
+        message = {
+            "message": 'The desktop limit has been reached'
+        }
+        return Response(message, status=status.HTTP_200_OK)
 
 
 class DesktopDetail(APIView):
