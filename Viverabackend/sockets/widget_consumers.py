@@ -1,5 +1,6 @@
 import logging
 import os
+from uuid import UUID
 
 import jwt
 import socketio
@@ -125,13 +126,11 @@ class WidgetNamespace(socketio.AsyncNamespace):
 
             widgets = []
             async for widget in widgets_queryset:
-                print(widget.uuid)
                 widgets.append(
                     dict_items_to_str(
                         model_to_dict(widget)
                     )
                 )
-
 
             await self.emit('get_all_widgets_answer', data=widgets, to=sid)
 
@@ -212,7 +211,6 @@ class WidgetNamespace(socketio.AsyncNamespace):
                         "uuid": str(folder.uuid)
                     }
                 )
-            print(folders)
             await self.emit('get_all_folders_answer', data=folders, to=sid)
 
         except Exception as ex:
@@ -272,5 +270,6 @@ class WidgetNamespace(socketio.AsyncNamespace):
 
 def dict_items_to_str(object: dict) -> dict:
     for k, v in object.items():
-        object[k] = str(v)
+        if type(v) is UUID:
+            object[k] = str(v)
     return object
