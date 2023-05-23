@@ -127,8 +127,10 @@ class WidgetNamespace(socketio.AsyncNamespace):
             widgets = []
             async for widget in widgets_queryset:
                 widgets.append(
-                    dict_items_to_str(
-                        model_to_dict(widget)
+                    widgetmodel_ptr_to_widget_uuid(
+                        dict_items_to_str(
+                            model_to_dict(widget)
+                        )
                     )
                 )
 
@@ -144,7 +146,7 @@ class WidgetNamespace(socketio.AsyncNamespace):
             await sync_to_async(serializer.is_valid)(raise_exception=True)
             data = await sync_to_async(serializer.save)()
 
-            widget = dict_items_to_str(model_to_dict(data))
+            widget = widgetmodel_ptr_to_widget_uuid(dict_items_to_str(model_to_dict(data)))
 
             await self.emit('post_widget_answer', data=widget, to=sid)
 
@@ -273,3 +275,9 @@ def dict_items_to_str(object: dict) -> dict:
         if type(v) is UUID:
             object[k] = str(v)
     return object
+
+
+def widgetmodel_ptr_to_widget_uuid(widget):
+    widget['widget_uuid'] = str(widget.get('widgetmodel_ptr'))
+    widget.pop('widgetmodel_ptr')
+    return widget
