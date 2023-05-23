@@ -13,3 +13,10 @@ yarn build
 ```
 
 to bundle your application
+
+```
+.env
+```
+
+DOMEN
+DISCORD_URL

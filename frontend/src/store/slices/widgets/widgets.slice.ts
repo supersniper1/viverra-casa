@@ -1,4 +1,4 @@
-import {createSlice} from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 export interface IWidgetSlice {
   widget_tag: string;
@@ -9,9 +9,11 @@ export interface IWidgetSlice {
   widget_y: number;
   z_index: number;
   is_collapsed: boolean;
-  desktop: number;
+  desktop: string;
+  folder: string | null;
   tracked_server?: string;
   text?: string;
+  tracked_name?: string;
 }
 
 export interface IWidgetsSlice {
@@ -20,7 +22,7 @@ export interface IWidgetsSlice {
 
 const initialState: IWidgetsSlice = {
   all_widgets: [],
-}
+};
 
 export const WidgetsSlice = createSlice({
   name: "Widgets",
@@ -30,10 +32,10 @@ export const WidgetsSlice = createSlice({
       state.all_widgets = action.payload;
     },
     UpdateWidget: (state, action) => {
-      console.log(state, action)
-    }
-  }
-})
+      console.log(state, action);
+    },
+  },
+});
 
-export const WidgetsReducer = WidgetsSlice.reducer
-export const WidgetsActions = WidgetsSlice.actions
+export const WidgetsReducer = WidgetsSlice.reducer;
+export const WidgetsActions = WidgetsSlice.actions;

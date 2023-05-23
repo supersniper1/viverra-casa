@@ -1,8 +1,8 @@
 .Sidebar {
-  width: 300px;
+  width: 400px;
   height: 100%;
   background: #FBFBFB;
-  padding: 60px 28px;
+  padding: 60px 0 0 28px;
   display: flex;
   flex-direction: column;
   justify-content: end;
@@ -26,4 +26,12 @@
 }
 .Bottom {
   height: 50%;
+}
+.ProfileManage {
+  display: flex;
+  flex-direction: row;
+}
+.Desktop {
+  display: flex;
+  flex-direction: row;
 }
