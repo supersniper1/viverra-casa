@@ -2,8 +2,9 @@ from rest_framework import serializers
 from rest_polymorphic.serializers import PolymorphicSerializer
 
 from users.models import UserModel
-from widgets.models import (DesktopModel, WidgetModel, WidgetsDiscordModel,
-                            WidgetsNoteModel, WidgetsTwitterModel, FolderModel)
+from widgets.models import (DesktopModel, FolderModel, WidgetModel,
+                            WidgetsDiscordModel, WidgetsNoteModel,
+                            WidgetsTwitterModel)
 
 
 class TestSerializer(serializers.Serializer):

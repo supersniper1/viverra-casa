@@ -1,6 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
+
 from .views import (Desktop, DesktopDetail, async_view_test,
                     authentication_view, discorduser)
 
