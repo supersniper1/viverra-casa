@@ -1,6 +1,48 @@
-from django.db import models
 import uuid
+
+from django.db import models
 from polymorphic.models import PolymorphicModel
+
+from users.models import UserModel
+
+
+class DesktopModel(models.Model):
+    """
+    This is Desktop models
+    for Desktop functions and
+    Buffering high load operations
+    """
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        primary_key=True,
+        editable=False
+    )
+    user_uuid = models.ForeignKey(
+        UserModel,
+        on_delete=models.CASCADE,
+        related_name='buffer_user'
+    )
+    desktop_name = models.CharField(max_length=100)
+
+
+class FolderModel(models.Model):
+    """
+    This is Folder model
+    For keep widgets in
+    """
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        primary_key=True,
+        editable=False
+    )
+    user_uuid = models.ForeignKey(
+        UserModel,
+        on_delete=models.CASCADE,
+        related_name='folder_user'
+    )
+    folder_name = models.CharField(max_length=100, null=True, blank=True)
 
 
 class WidgetModel(PolymorphicModel):
@@ -15,6 +57,20 @@ class WidgetModel(PolymorphicModel):
     widget_y = models.IntegerField()
     widget_size_x = models.IntegerField()
     widget_size_y = models.IntegerField()
+    z_index = models.IntegerField()
+    is_collapsed = models.BooleanField()
+    desktop = models.ForeignKey(
+        DesktopModel,
+        on_delete=models.CASCADE,
+        related_name='desktop_widget',
+    )
+    folder = models.ForeignKey(
+        FolderModel,
+        on_delete=models.CASCADE,
+        related_name='folder_widget',
+        null=True,
+        blank=True
+    )
 
     class Meta:
         verbose_name = "Widget"
@@ -43,3 +99,6 @@ class WidgetsNoteModel(WidgetModel):
     class Meta:
         verbose_name = "Note Widget"
         verbose_name_plural = "Note Widgets"
+
+
+

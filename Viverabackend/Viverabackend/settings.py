@@ -8,7 +8,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["158.160.30.44", "127.0.0.1"]
+ALLOWED_HOSTS = ["158.160.30.44", "127.0.0.1", "sovraska.ru"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -102,7 +102,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=6),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=40),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),
     'BLACKLIST_AFTER_ROTATION': False,

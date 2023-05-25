@@ -3,8 +3,10 @@ import os
 
 import tweepy
 from adrf.decorators import api_view
+from adrf.views import APIView
 from asgiref.sync import sync_to_async
 from django.contrib.auth import login
+from django.shortcuts import get_object_or_404
 from dotenv import load_dotenv
 from rest_framework import status
 from rest_framework.decorators import permission_classes
@@ -12,8 +14,12 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from widgets.models import DesktopModel
+
 from .auth import AuthenticationBackend, get_user_from_token
-from .serializers import AuthenticationSerializer, TestSerializer
+from .serializers import (AuthenticationSerializer, DesktopSerializer,
+                          TestSerializer)
+from .utils import is_desktop_can_exist
 
 logging.basicConfig(
     filename='main.log',

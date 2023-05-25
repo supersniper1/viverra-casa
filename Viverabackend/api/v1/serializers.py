@@ -1,8 +1,10 @@
 from rest_framework import serializers
+from rest_polymorphic.serializers import PolymorphicSerializer
 
 from users.models import UserModel
-from widgets.models import WidgetModel, WidgetsNoteModel, WidgetsTwitterModel, WidgetsDiscordModel
-from rest_polymorphic.serializers import PolymorphicSerializer
+from widgets.models import (DesktopModel, FolderModel, WidgetModel,
+                            WidgetsDiscordModel, WidgetsNoteModel,
+                            WidgetsTwitterModel)
 
 
 class TestSerializer(serializers.Serializer):
@@ -26,6 +28,29 @@ class AuthenticationSerializer(serializers.ModelSerializer):
         fields = ('token',)
 
 
+class RefreshSerializer(serializers.ModelSerializer):
+    """Create Discord user from token or authorize"""
+    token = serializers.CharField()
+
+    class Meta:
+        model = UserModel
+        fields = ('token',)
+
+
+class DesktopSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = DesktopModel
+        fields = ('desktop_name',)
+
+
+class FolderSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = FolderModel
+        fields = ('folder_name', )
+
+
 class WidgetSerializer(serializers.ModelSerializer):
     """Base Widget Serializer"""
     uuid = serializers.ReadOnlyField()
@@ -39,6 +64,10 @@ class WidgetSerializer(serializers.ModelSerializer):
             'widget_y',
             'widget_size_x',
             'widget_size_y',
+            'z_index',
+            'is_collapsed',
+            'desktop',
+            'folder',
         )
 
 
@@ -55,7 +84,11 @@ class WidgetsNoteSerializer(serializers.ModelSerializer):
             'widget_y',
             'widget_size_x',
             'widget_size_y',
-            'text'
+            'z_index',
+            'is_collapsed',
+            'text',
+            'desktop',
+            'folder',
         )
 
 
@@ -72,7 +105,11 @@ class WidgetsTwitterSerializer(serializers.ModelSerializer):
             'widget_y',
             'widget_size_x',
             'widget_size_y',
-            'tracked_name'
+            'z_index',
+            'is_collapsed',
+            'tracked_name',
+            'desktop',
+            'folder',
         )
 
 
@@ -89,7 +126,11 @@ class WidgetsDiscordSerializer(serializers.ModelSerializer):
             'widget_y',
             'widget_size_x',
             'widget_size_y',
-            'tracked_server'
+            'z_index',
+            'is_collapsed',
+            'tracked_server',
+            'desktop',
+            'folder',
         )
 
 
