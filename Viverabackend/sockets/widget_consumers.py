@@ -1,18 +1,20 @@
 import logging
 import os
+from pathlib import Path
 
 import socketio
 from asgiref.sync import sync_to_async
 
 from api.v1.serializers import (FolderSerializer, TestSerializer,
                                 WidgetsPolymorphicSerializer)
+from dotenv import load_dotenv
 
-from users.models import BufferUserSocketModel
 from widgets.models import DesktopModel, FolderModel, WidgetModel
 
 from .leveler import leveler_z_index
 from .tweets import get_tweets_from_username
-from .utils import configurate_widget, widgetmodel_ptr_to_widget_uuid, user_desktop_to_z_index_uuid
+from .utils import configurate_widget, widgetmodel_ptr_to_widget_uuid, widget_desktop_to_z_index_uuid, \
+    get_desktop_from_sid
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
@@ -20,9 +22,18 @@ import django
 
 django.setup()
 
+from core.exception.widget_exception import ToLowMaxZIndexException
+
 logger = logging.getLogger(__name__)
 
-MAX_Z_INDEX = 9
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+load_dotenv(os.path.join(BASE_DIR / 'infra', '.env'))
+
+MAX_WIDGETS_ON_DESKTOP = int(os.getenv('MAX_WIDGETS_ON_DESKTOP'))
+MAX_Z_INDEX_ON_DESKTOP = int(os.getenv('MAX_Z_INDEX_ON_DESKTOP'))
+
+if MAX_WIDGETS_ON_DESKTOP >= MAX_Z_INDEX_ON_DESKTOP:
+    raise ToLowMaxZIndexException()
 
 
 class WidgetNamespace(socketio.AsyncNamespace):
@@ -33,14 +44,7 @@ class WidgetNamespace(socketio.AsyncNamespace):
     async def on_get_all_widgets(self, sid, data):
         """get all widgets from current User"""
         try:
-            socket_session = await sync_to_async(
-                BufferUserSocketModel.objects.select_related('user_uuid').get
-            )(
-                socket_id=sid
-            )
-            user_desktop = await sync_to_async(
-                DesktopModel.objects.filter
-            )(user_uuid=socket_session.user_uuid)
+            user_desktop = await sync_to_async(get_desktop_from_sid)(sid)
 
             widgets_queryset = await sync_to_async(
                 WidgetModel.objects.filter
@@ -64,10 +68,24 @@ class WidgetNamespace(socketio.AsyncNamespace):
         try:
             serializer = WidgetsPolymorphicSerializer(data=data)
             await sync_to_async(serializer.is_valid)(raise_exception=True)
-            data = await sync_to_async(serializer.save)()
-            widget = widgetmodel_ptr_to_widget_uuid(configurate_widget(data))
 
-            await self.emit('post_widget_answer', data=widget, to=sid)
+            user_desktop = serializer.validated_data.get('desktop')
+
+            widgets_queryset = await sync_to_async(
+                WidgetModel.objects.filter
+            )(desktop__in=[user_desktop, ])
+
+            widgets_count = await sync_to_async(widgets_queryset.count)()
+            if widgets_count >= MAX_WIDGETS_ON_DESKTOP:
+                message = {
+                    "message": "The limit of widgets on this desktop has been reached"
+                }
+                await self.emit('post_widget_answer', data=message, to=sid)
+            else:
+                data = await sync_to_async(serializer.save)()
+                widget = widgetmodel_ptr_to_widget_uuid(configurate_widget(data))
+
+                await self.emit('post_widget_answer', data=widget, to=sid)
 
         except Exception as ex:
             await self.emit('error', data=str(ex), to=sid)
@@ -81,16 +99,8 @@ class WidgetNamespace(socketio.AsyncNamespace):
             serializer = WidgetsPolymorphicSerializer(widget, data=data, partial=True)
             await sync_to_async(serializer.is_valid)(raise_exception=True)
 
-            if serializer.validated_data.get('z_index') > MAX_Z_INDEX:
-                socket_session = await sync_to_async(
-                    BufferUserSocketModel.objects.select_related('user_uuid').get
-                )(
-                    socket_id=sid
-                )
-                user_desktop = await sync_to_async(
-                    DesktopModel.objects.filter
-                )(user_uuid=socket_session.user_uuid)
-                z_indexes = await sync_to_async(user_desktop_to_z_index_uuid)(user_desktop)
+            if serializer.validated_data.get('z_index') > MAX_Z_INDEX_ON_DESKTOP - 1:
+                z_indexes = await sync_to_async(widget_desktop_to_z_index_uuid)(widget)
 
                 leveled = await sync_to_async(leveler_z_index)(z_indexes)
                 for uuid, z_index in leveled.items():

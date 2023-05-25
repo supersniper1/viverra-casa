@@ -1,5 +1,3 @@
-import os
-
 from selenium import webdriver
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
@@ -7,8 +5,6 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
 from .decorators import time_test
-
-TWEEPY_TOKEN = str(os.getenv('TWEEPY_TOKEN'))
 
 
 options = webdriver.ChromeOptions()
