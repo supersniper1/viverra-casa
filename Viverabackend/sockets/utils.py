@@ -2,6 +2,8 @@ from uuid import UUID
 
 from django.forms.models import model_to_dict
 
+from widgets.models import WidgetModel
+
 
 def configurate_widget(widget):
     processed_widget = dict_uuid_to_str(
@@ -23,3 +25,7 @@ def widgetmodel_ptr_to_widget_uuid(widget):
     widget['widget_uuid'] = str(widget.get('widgetmodel_ptr'))
     widget.pop('widgetmodel_ptr')
     return widget
+
+
+def user_desktop_to_z_index_uuid(user_desktop):
+    return WidgetModel.objects.filter(desktop__in=user_desktop).values_list("uuid", "z_index")
