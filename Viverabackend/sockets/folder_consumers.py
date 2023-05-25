@@ -1,10 +1,8 @@
-import logging
 import os
 
 import socketio
 from asgiref.sync import sync_to_async
 from django.forms.models import model_to_dict
-from dotenv import load_dotenv
 
 from api.v1.serializers import (FolderSerializer, TestSerializer,
                                 WidgetsPolymorphicSerializer)
@@ -50,7 +48,7 @@ class FolderNamespace(socketio.AsyncNamespace):
             await self.emit('error', data=str(ex), to=sid)
 
     async def on_post_folder(self, sid, data):
-        """Create One Widget for current User"""
+        """Create One folder for current User"""
         try:
             socket_session = await sync_to_async(
                 BufferUserSocketModel.objects.select_related('user_uuid').get
@@ -74,7 +72,7 @@ class FolderNamespace(socketio.AsyncNamespace):
             await self.emit('error', data=str(ex), to=sid)
 
     async def on_update_folder(self, sid, data):
-        """Update One Widget for current User"""
+        """Update One folder for current User"""
         try:
             folder = await sync_to_async(
                 FolderModel.objects.get
@@ -102,5 +100,3 @@ class FolderNamespace(socketio.AsyncNamespace):
             await self.emit('delete_folder_answer', data=response, to=sid)
         except Exception as ex:
             await self.emit('error', data=str(ex), to=sid)
-
-

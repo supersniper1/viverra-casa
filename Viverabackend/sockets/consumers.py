@@ -11,6 +11,7 @@ from users.models import BufferUserSocketModel
 from .folder_consumers import FolderNamespace
 from .middleware import create_response, socket_authentication
 from .widget_consumers import WidgetNamespace
+from .desktop_consumers import DesktopNamespace
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
@@ -30,7 +31,7 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 
-class MainWidgetNamespace(WidgetNamespace, FolderNamespace):
+class MainWidgetNamespace(WidgetNamespace, FolderNamespace, DesktopNamespace):
     """
     Widget Namespace
     """

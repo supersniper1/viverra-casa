@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 MAX_Z_INDEX = 9
 
+
 class WidgetNamespace(socketio.AsyncNamespace):
     """
     Widget Namespace
@@ -132,4 +133,3 @@ class WidgetNamespace(socketio.AsyncNamespace):
             await self.emit('tweets_answer', data=response, to=sid)
         except Exception as ex:
             await self.emit('error', data=str(ex), to=sid)
-
