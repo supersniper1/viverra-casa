@@ -1,16 +1,24 @@
+@import "@ui/variables.module.scss";
+
+@mixin background-color {
+  width: 28px;
+  height: 28px;
+  border-radius: 100%;
+}
+
 .Sidebar {
   width: 400px;
-  height: 100%;
-  background: #FBFBFB;
-  padding: 60px 0 0 28px;
+  height: 100vh;
+  background: #fbfbfb;
+  padding: 60px 28px;
   display: flex;
   flex-direction: column;
-  justify-content: end;
+  justify-content: space-between;
 }
 .Logo {
   width: 199px;
   height: 39px;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: 32px;
@@ -19,7 +27,7 @@
   color: #343847;
 }
 .LogoSecondColor {
-  color: #3A60E8;
+  color: #3a60e8;
 }
 .Top {
   height: 50%;
@@ -27,11 +35,35 @@
 .Bottom {
   height: 50%;
 }
-.ProfileManage {
+.ProfileManageButton {
   display: flex;
   flex-direction: row;
 }
 .Desktop {
+  cursor: pointer;
   display: flex;
   flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  padding: 5px;
+}
+.DesktopButtons {
+  display: flex;
+  gap: 4px;
+}
+.ColorWhite {
+  background: $white_background_color;
+  @include background-color;
+}
+.ColorLightPink {
+  background: $light_pink_background_color;
+  @include background-color;
+}
+.ColorPink {
+  background: $pink_background_color;
+  @include background-color;
+}
+.ActiveDesktop {
+  background: #f0f0ff;
+  border-radius: 0px 5px 5px 0px;
 }

@@ -18,20 +18,3 @@ export const refreshAccessTokenGet = async (token: string) => {
     return "error in post.ts refreshAccessTokenGet";
   }
 };
-
-export const addDesktop = async () => {
-  const response = await fetch("http://sovraska.ru/api/v1/desktop/", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "*/*",
-      Authorization: `Bearer ${localStorage.getItem("access-token")}`,
-    },
-    body: JSON.stringify({
-      desktop_name: "desktop",
-    }),
-  });
-  if (response.ok) {
-    return await response.json();
-  }
-};
