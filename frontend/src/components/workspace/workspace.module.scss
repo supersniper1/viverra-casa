@@ -1,6 +1,7 @@
+@import "@ui/variables.module.scss";
+
 .workspace {
   padding: 20px;
-  background: linear-gradient(108.73deg, #E6E6E6 11.8%, #DEDEFF 55.32%, #E3E3EB 96.06%);
   width: 100%;
   height: 100vh;
 }
@@ -12,7 +13,7 @@
   bottom: 40px;
   left: calc(50vw - 300px);
 
-  background: #FFFFFF;
+  background: #ffffff;
   box-shadow: 0 4px 10px rgba(17, 23, 34, 0.05);
   border-radius: 15px;
   display: flex;
@@ -37,3 +38,21 @@
   width: 44px;
   height: 44px;
 }
+
+.ColorWhite {
+  background: $white_background_color;
+}
+.ColorLightPink {
+  background: $light_pink_background_color;
+}
+.ColorPink {
+  background: $pink_background_color;
+}
+
+
+// linear-gradient(
+//     108.73deg,
+//     #e6e6e6 11.8%,
+//     #dedeff 55.32%,
+//     #e3e3eb 96.06%
+//   )

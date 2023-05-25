@@ -1,26 +1,22 @@
-import React, {FunctionComponent, useMemo} from "react";
+import React, { FunctionComponent, useMemo } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { refreshAccessTokenGet } from '@api/fetch/post'
+import { refreshAccessTokenGet } from "@api/fetch/post";
 
 export const Redirect: FunctionComponent = () => {
-    const location = useLocation();
-    const token = location.search.split("=")[1]
+  const location = useLocation();
+  const token = location.search.split("=")[1];
 
-    useMemo(() => {
-        if(!localStorage.getItem('refresh-token')) {
-            refreshAccessTokenGet(token)
-        }
-    }, [])
-
-    if (localStorage.getItem("access-token")) {
-        return (
-            <Navigate to="/main"/>
-        )
+  useMemo(() => {
+    if (!localStorage.getItem("refresh-token")) {
+      refreshAccessTokenGet(token).then(() => {
+        window.location.reload();
+      });
     }
+  }, []);
 
-    return (
-        <div>
-            anal
-        </div>
-    )
-}
+  if (localStorage.getItem("access-token")) {
+    return <Navigate to="/main" />;
+  }
+
+  return <div>anal</div>;
+};

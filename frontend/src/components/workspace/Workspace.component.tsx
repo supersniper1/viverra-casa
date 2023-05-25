@@ -6,10 +6,13 @@ import { Icons } from "@/assets/components/export";
 import { useActions } from "@hooks/redux.useActions";
 import { socket } from "@api/ws/socket";
 import { IWidgetSlice } from "@store/slices/widgets/widgets.slice";
+import cn from "classnames";
 
 export const Workspace: FunctionComponent = () => {
   const widgets = useTypedSelector((state) => state.Widgets.all_widgets);
   const activeDesktop = useTypedSelector((state) => state.Desktop.active);
+  const desktopColor = useTypedSelector((state) => state.Desktop.color);
+  const folders = useTypedSelector((state) => state.Folders.all_folders);
 
   console.log(widgets);
 
@@ -28,7 +31,14 @@ export const Workspace: FunctionComponent = () => {
   };
 
   return (
-    <div className={s.workspace}>
+    <div
+      className={cn(
+        s.workspace,
+        desktopColor === "white" && s.ColorWhite,
+        desktopColor === "light-pink" && s.ColorLightPink,
+        desktopColor === "pink" && s.ColorPink
+      )}
+    >
       <Component.AddWidgetModal />
       {widgets.map(
         (widget) =>
@@ -39,11 +49,17 @@ export const Workspace: FunctionComponent = () => {
           )
       )}
       <div className={s.bottomPanel}>
+        {folders.map((folder) => folder.folder_name === "note" && (
+          <button key={folder.uuid}>
+            <Icons.NotesWidget className={s.NotesCollapsedIcon} />
+          </button>
+        ))}
         {widgets.map(
           (widget) =>
             widget.desktop === activeDesktop &&
             widget.is_collapsed === true &&
-            widget.widget_tag === "note" && (
+            widget.widget_tag === "note" &&
+            widget.folder === null && (
               <button
                 key={widget.widget_uuid}
                 onClick={() => uncollapse(widget)}
