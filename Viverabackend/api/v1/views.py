@@ -12,11 +12,9 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-
 from .auth import AuthenticationBackend, get_user_from_token
-from .serializers import (AuthenticationSerializer, DesktopSerializer,
+from .serializers import (AuthenticationSerializer,
                           TestSerializer)
-
 
 logging.basicConfig(
     filename='main.log',

@@ -15,14 +15,16 @@ def get_user_avatar_base64(user) -> str:
         ),
         timeout=5
     )
-    avatar_b64 = str(base64.b64encode(avatar.content)).replace("'", '')[1:]
-    return avatar_b64
+    return str(base64.b64encode(avatar.content)).replace("'", '')[1:]
 
 
 class UserOAuth2Manager(models.UserManager):
     def create_user(self, user):
-        discord_tag = '%s#%s' % (user.get('username'), user.get('discriminator'))
-        new_user = self.create(
+        discord_tag = '%s#%s' % (
+            user.get('username'),
+            user.get('discriminator')
+        )
+        return self.create(
             username=user.get('username'),
             discord_id=user.get('id'),
             avatar=get_user_avatar_base64(user),
@@ -32,7 +34,6 @@ class UserOAuth2Manager(models.UserManager):
             is_staff=False,
             is_active=True,
         )
-        return new_user
 
     def create_superuser(
             self,
@@ -52,7 +53,7 @@ class UserOAuth2Manager(models.UserManager):
 
         password = make_password(password)
         discord_tag = '%s#%s' % (username, username)
-        new_superuser = self.create(
+        return self.create(
             username=username,
             email=email or None,
             password=password,
@@ -63,5 +64,3 @@ class UserOAuth2Manager(models.UserManager):
             is_staff=extra_fields.get('is_staff'),
             is_active=extra_fields.get('is_active'),
         )
-
-        return new_superuser

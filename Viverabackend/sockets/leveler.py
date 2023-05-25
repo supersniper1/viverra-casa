@@ -1,5 +1,3 @@
-
-
 def leveler_z_index(array):
     sorted_dict = dict(sorted(array, key=lambda item: item[1]))
     new_dict = dict()

@@ -1,15 +1,12 @@
-import logging
 import os
 
 import socketio
 from asgiref.sync import sync_to_async
 from django.forms.models import model_to_dict
-from dotenv import load_dotenv
 
-from api.v1.serializers import (FolderSerializer, TestSerializer,
-                                WidgetsPolymorphicSerializer, DesktopSerializer)
+from api.v1.serializers import DesktopSerializer
 from users.models import BufferUserSocketModel
-from widgets.models import DesktopModel, FolderModel, WidgetModel
+from widgets.models import DesktopModel
 
 from .utils import is_desktop_can_exist
 
@@ -63,7 +60,10 @@ class DesktopNamespace(socketio.AsyncNamespace):
             serializer = DesktopSerializer(data=data)
             await sync_to_async(serializer.is_valid)(raise_exception=True)
             serializer.validated_data['user_uuid'] = socket_session.user_uuid
-            if not await sync_to_async(is_desktop_can_exist)(socket_session.user_uuid):
+
+            if not await sync_to_async(
+                    is_desktop_can_exist
+            )(socket_session.user_uuid):
                 message = {
                     "message": "The desktop limit has been reached"
                 }

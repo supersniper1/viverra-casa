@@ -8,10 +8,10 @@ from dotenv import load_dotenv
 
 from users.models import BufferUserSocketModel
 
+from .desktop_consumers import DesktopNamespace
 from .folder_consumers import FolderNamespace
 from .middleware import create_response, socket_authentication
 from .widget_consumers import WidgetNamespace
-from .desktop_consumers import DesktopNamespace
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
@@ -64,7 +64,8 @@ class MainWidgetNamespace(WidgetNamespace, FolderNamespace, DesktopNamespace):
                     "",
                     401,
                     {
-                        "message": "Authorization not found, Please send valid token in headers"
+                        "message": "Authorization not found, "
+                                   "Please send valid token in headers"
                     }
                 )
                 logger.info(f"Response {response}")
@@ -73,7 +74,11 @@ class MainWidgetNamespace(WidgetNamespace, FolderNamespace, DesktopNamespace):
                 await self.emit('disconnect')
 
         except jwt.ExpiredSignatureError:
-            response = create_response("", 401, {"message": "Authentication token has expired"})
+            response = create_response(
+                "",
+                401,
+                {"message": "Authentication token has expired"}
+            )
             logger.info(f"Response {response}")
 
             await self.emit('error', data=response, to=sid)
@@ -84,7 +89,8 @@ class MainWidgetNamespace(WidgetNamespace, FolderNamespace, DesktopNamespace):
                 "",
                 401,
                 {
-                    "message": "Authorization has failed, Please send valid token."
+                    "message": "Authorization has failed, "
+                               "Please send valid token."
                 }
             )
             logger.info(f"Response {response}")

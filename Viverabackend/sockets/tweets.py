@@ -1,5 +1,3 @@
-import os
-
 from selenium import webdriver
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
@@ -7,9 +5,6 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
 from .decorators import time_test
-
-TWEEPY_TOKEN = str(os.getenv('TWEEPY_TOKEN'))
-
 
 options = webdriver.ChromeOptions()
 options.add_argument('--headless')
@@ -60,7 +55,6 @@ def scrape_tweet(current_elem, username):
 
 @time_test
 def get_tweets_from_username(username):
-
     # driver = webdriver.Remote(desired_capabilities=DesiredCapabilities().CHROME,
     #                           command_executor="http://chrome:4444/wd/hub", options=options)
     url = f"https://twitter.com/{username}"
@@ -69,33 +63,4 @@ def get_tweets_from_username(username):
         ec.presence_of_element_located((By.XPATH, '//div[@data-testid]//article[@data-testid="tweet"]'))
     )
 
-    current_elem = scrape_tweet(current_element, username)
-
-    return current_elem
-    # print(username)
-    # auth = tweepy.Client(
-    #     TWEEPY_TOKEN
-    # )
-    # print(auth)
-    # user = auth.get_user(
-    #     username=username
-    # )
-    # print(user)
-    # session = auth.get_users_tweets(
-    #     user.data.id
-    # )
-    # tweets = session.data
-    # tweets_dict = []
-    # for tweet in tweets:
-    #     tweets_dict.append(
-    #         [
-    #             [
-    #                 "id",
-    #                 tweet.id
-    #             ],
-    #             [
-    #                 "text",
-    #                 tweet.text
-    #             ]
-    #         ]
-    #     )
+    return scrape_tweet(current_element, username)

@@ -2,7 +2,8 @@ from uuid import UUID
 
 from django.forms.models import model_to_dict
 
-from widgets.models import WidgetModel, DesktopModel
+from users.models import BufferUserSocketModel
+from widgets.models import DesktopModel, WidgetModel
 
 
 def configurate_widget(widget):
@@ -27,10 +28,24 @@ def widgetmodel_ptr_to_widget_uuid(widget):
     return widget
 
 
-def user_desktop_to_z_index_uuid(user_desktop):
-    return WidgetModel.objects.filter(desktop__in=user_desktop).values_list("uuid", "z_index")
+def widget_desktop_to_z_index_uuid(widget):
+    return WidgetModel.objects.filter(
+        desktop=widget.desktop
+    ).values_list("uuid", "z_index")
 
 
 def is_desktop_can_exist(user_uuid):
     desktop_count = DesktopModel.objects.filter(user_uuid=user_uuid).count()
     return desktop_count < 4
+
+
+def get_desktop_from_sid(sid):
+    socket_session = BufferUserSocketModel.objects.select_related(
+        'user_uuid'
+    ).get(
+        socket_id=sid
+    )
+    return DesktopModel.objects.filter(
+        user_uuid=socket_session.user_uuid
+    )
+
