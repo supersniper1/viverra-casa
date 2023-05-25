@@ -1,11 +1,9 @@
 from uuid import UUID
 
-from asgiref.sync import sync_to_async
 from django.forms.models import model_to_dict
 
-from widgets.models import WidgetModel, DesktopModel
-
 from users.models import BufferUserSocketModel
+from widgets.models import DesktopModel, WidgetModel
 
 
 def configurate_widget(widget):
@@ -31,7 +29,9 @@ def widgetmodel_ptr_to_widget_uuid(widget):
 
 
 def widget_desktop_to_z_index_uuid(widget):
-    return WidgetModel.objects.filter(desktop=widget.desktop).values_list("uuid", "z_index")
+    return WidgetModel.objects.filter(
+        desktop=widget.desktop
+    ).values_list("uuid", "z_index")
 
 
 def is_desktop_can_exist(user_uuid):
@@ -45,8 +45,7 @@ def get_desktop_from_sid(sid):
     ).get(
         socket_id=sid
     )
-    user_desktop = DesktopModel.objects.filter(
+    return DesktopModel.objects.filter(
         user_uuid=socket_session.user_uuid
     )
 
-    return user_desktop

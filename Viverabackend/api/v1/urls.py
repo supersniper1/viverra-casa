@@ -2,8 +2,7 @@ from django.urls import include, path
 from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
 
-from .views import (async_view_test,
-                    authentication_view, discorduser)
+from .views import async_view_test, authentication_view, discorduser
 
 router_v1 = routers.DefaultRouter()
 

@@ -99,6 +99,3 @@ class WidgetsNoteModel(WidgetModel):
     class Meta:
         verbose_name = "Note Widget"
         verbose_name_plural = "Note Widgets"
-
-
-

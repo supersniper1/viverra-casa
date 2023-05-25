@@ -4,17 +4,16 @@ from pathlib import Path
 
 import socketio
 from asgiref.sync import sync_to_async
-
-from api.v1.serializers import (FolderSerializer, TestSerializer,
-                                WidgetsPolymorphicSerializer)
 from dotenv import load_dotenv
 
-from widgets.models import DesktopModel, FolderModel, WidgetModel
+from api.v1.serializers import TestSerializer, WidgetsPolymorphicSerializer
+from widgets.models import WidgetModel
 
 from .leveler import leveler_z_index
 from .tweets import get_tweets_from_username
-from .utils import configurate_widget, widgetmodel_ptr_to_widget_uuid, widget_desktop_to_z_index_uuid, \
-    get_desktop_from_sid
+from .utils import (configurate_widget, get_desktop_from_sid,
+                    widget_desktop_to_z_index_uuid,
+                    widgetmodel_ptr_to_widget_uuid)
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
@@ -78,12 +77,15 @@ class WidgetNamespace(socketio.AsyncNamespace):
             widgets_count = await sync_to_async(widgets_queryset.count)()
             if widgets_count >= MAX_WIDGETS_ON_DESKTOP:
                 message = {
-                    "message": "The limit of widgets on this desktop has been reached"
+                    "message": "The limit of widgets on this desktop "
+                               "has been reached"
                 }
                 await self.emit('post_widget_answer', data=message, to=sid)
             else:
                 data = await sync_to_async(serializer.save)()
-                widget = widgetmodel_ptr_to_widget_uuid(configurate_widget(data))
+                widget = widgetmodel_ptr_to_widget_uuid(
+                    configurate_widget(data)
+                )
 
                 await self.emit('post_widget_answer', data=widget, to=sid)
 
@@ -96,19 +98,29 @@ class WidgetNamespace(socketio.AsyncNamespace):
             widget = await sync_to_async(
                 WidgetModel.objects.get
             )(uuid=data.get('widget_uuid'))
-            serializer = WidgetsPolymorphicSerializer(widget, data=data, partial=True)
+            serializer = WidgetsPolymorphicSerializer(
+                widget, data=data, partial=True
+            )
             await sync_to_async(serializer.is_valid)(raise_exception=True)
 
-            if serializer.validated_data.get('z_index') > MAX_Z_INDEX_ON_DESKTOP - 1:
-                z_indexes = await sync_to_async(widget_desktop_to_z_index_uuid)(widget)
+            if serializer.validated_data.get(
+                    'z_index'
+            ) > MAX_Z_INDEX_ON_DESKTOP - 1:
+                z_indexes = await sync_to_async(
+                    widget_desktop_to_z_index_uuid
+                )(widget)
 
                 leveled = await sync_to_async(leveler_z_index)(z_indexes)
                 for uuid, z_index in leveled.items():
                     widget = await sync_to_async(
                         WidgetModel.objects.get
                     )(uuid=uuid)
-                    serializer = WidgetsPolymorphicSerializer(widget, data={"z_index": z_index}, partial=True)
-                    await sync_to_async(serializer.is_valid)(raise_exception=True)
+                    serializer = WidgetsPolymorphicSerializer(
+                        widget, data={"z_index": z_index}, partial=True
+                    )
+                    await sync_to_async(
+                        serializer.is_valid
+                    )(raise_exception=True)
                     await sync_to_async(serializer.save)()
 
             data = await sync_to_async(serializer.save)()

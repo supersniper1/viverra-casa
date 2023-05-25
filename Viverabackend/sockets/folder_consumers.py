@@ -4,10 +4,9 @@ import socketio
 from asgiref.sync import sync_to_async
 from django.forms.models import model_to_dict
 
-from api.v1.serializers import (FolderSerializer, TestSerializer,
-                                WidgetsPolymorphicSerializer)
+from api.v1.serializers import FolderSerializer
 from users.models import BufferUserSocketModel
-from widgets.models import DesktopModel, FolderModel, WidgetModel
+from widgets.models import FolderModel
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 

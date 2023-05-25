@@ -52,7 +52,6 @@ async def socket_authentication(jwt_token):
 
     user_uuid = payload.get('user_id').replace('-', '')
 
-    discord_user = await sync_to_async(
+    return await sync_to_async(
         get_object_or_404
     )(UserModel, uuid=user_uuid)
-    return discord_user
