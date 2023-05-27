@@ -39,7 +39,7 @@ class FolderNamespace(socketio.AsyncNamespace):
                     {
                         "uuid": str(folder.uuid),
                         "folder_name": str(folder.folder_name),
-                        "desktop": str(folder.desktop.uuid)
+                        "desktop": str(folder.desktop)
                     }
                 )
             await self.emit('get_all_folders_answer', data=folders, to=sid)
