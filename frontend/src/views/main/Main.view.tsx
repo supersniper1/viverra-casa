@@ -3,10 +3,8 @@ import { Component } from "@components/export.components";
 import { socket } from "@/api/ws/socket";
 import { useActions } from "@hooks/redux.useActions";
 import s from "./main.module.scss";
-import { getDesktops } from "@/api/fetch/get";
 import { IWidgetsSlice } from "@/store/slices/widgets/widgets.slice";
 import { IFolders } from "@/store/slices/folders/folders.slice";
-import { IDesktops } from "@/store/slices/desktop/desktop.slice";
 
 export const Main: FunctionComponent = () => {
   const {
@@ -20,10 +18,6 @@ export const Main: FunctionComponent = () => {
 
   useMemo(() => {
     if (localStorage.getItem("access-token")) {
-      getDesktops().then((res) => {
-        SetDesktops(res.desktops);
-        SetActive(res.desktops[0].uuid);
-      });
       socket.connect();
       socket.on("connect", () => {
         console.log("connect");
