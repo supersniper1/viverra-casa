@@ -41,14 +41,14 @@ class DesktopSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DesktopModel
-        fields = ('desktop_name',)
+        fields = ('desktop_name', )
 
 
 class FolderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FolderModel
-        fields = ('folder_name', )
+        fields = ('folder_name', "desktop", )
 
 
 class WidgetSerializer(serializers.ModelSerializer):
