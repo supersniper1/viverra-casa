@@ -49,3 +49,6 @@ def get_desktop_from_sid(sid):
         user_uuid=socket_session.user_uuid
     )
 
+
+def get_desktop_uuid_from_object(object):
+    return object.desktop.uuid

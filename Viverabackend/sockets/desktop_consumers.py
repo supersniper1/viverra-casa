@@ -8,7 +8,7 @@ from api.v1.serializers import DesktopSerializer
 from users.models import BufferUserSocketModel
 from widgets.models import DesktopModel
 
-from .utils import is_desktop_can_exist, dict_uuid_to_str
+from .utils import is_desktop_can_exist
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
@@ -38,7 +38,11 @@ class DesktopNamespace(socketio.AsyncNamespace):
             desktops = []
             async for desktop in user_desktops:
                 desktops.append(
-                    dict_uuid_to_str(model_to_dict(desktop))
+                    {
+                        "uuid": str(desktop.uuid),
+                        "desktop_name": str(desktop.desktop_name),
+                        "max_z_index": int(desktop.max_z_index)
+                    }
                 )
             await self.emit('get_all_desktops_answer', data=desktops, to=sid)
 
@@ -68,7 +72,11 @@ class DesktopNamespace(socketio.AsyncNamespace):
             else:
                 desktop = await sync_to_async(serializer.save)()
 
-                message = dict_uuid_to_str(model_to_dict(desktop))
+                message = {
+                    "uuid": str(desktop.uuid),
+                    "desktop_name": str(desktop.desktop_name),
+                    "max_z_index": int(desktop.max_z_index)
+                }
                 await self.emit('post_desktop_answer', data=message, to=sid)
         except Exception as ex:
             await self.emit('error', data=str(ex), to=sid)
