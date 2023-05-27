@@ -44,6 +44,11 @@ class FolderModel(models.Model):
         related_name='folder_user'
     )
     folder_name = models.CharField(max_length=100, null=True, blank=True)
+    desktop = models.ForeignKey(
+        DesktopModel,
+        on_delete=models.CASCADE,
+        related_name='desktop_folder',
+    )
 
 
 class WidgetModel(PolymorphicModel):
