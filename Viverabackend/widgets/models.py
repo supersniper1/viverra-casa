@@ -72,7 +72,7 @@ class WidgetModel(PolymorphicModel):
     )
     folder = models.ForeignKey(
         FolderModel,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name='folder_widget',
         null=True,
         blank=True

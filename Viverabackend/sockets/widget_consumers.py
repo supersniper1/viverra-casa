@@ -13,8 +13,7 @@ from .leveler import leveler_z_index
 from .tweets import get_tweets_from_username
 from .utils import (configurate_widget, get_desktop_from_sid,
                     widget_desktop_to_z_index_uuid,
-                    widgetmodel_ptr_to_widget_uuid)
-from widgets.models import DesktopModel
+                    widgetmodel_ptr_to_widget_uuid, get_desktop_from_object)
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
@@ -69,11 +68,11 @@ class WidgetNamespace(socketio.AsyncNamespace):
             serializer = WidgetsPolymorphicSerializer(data=data)
             await sync_to_async(serializer.is_valid)(raise_exception=True)
 
-            user_desktop = serializer.validated_data.get('desktop')
+            user_desktops = serializer.validated_data.get('desktop')
 
             widgets_queryset = await sync_to_async(
                 WidgetModel.objects.filter
-            )(desktop__in=[user_desktop, ])
+            )(desktop__in=[user_desktops, ])
 
             widgets_count = await sync_to_async(widgets_queryset.count)()
             if widgets_count >= MAX_WIDGETS_ON_DESKTOP:
@@ -83,6 +82,10 @@ class WidgetNamespace(socketio.AsyncNamespace):
                 }
                 await self.emit('post_widget_answer', data=message, to=sid)
             else:
+                widget_desktop = serializer.validated_data.get('desktop')
+                widget_desktop.max_z_index = serializer.validated_data.get('z_index')
+                await sync_to_async(widget_desktop.save)()
+
                 data = await sync_to_async(serializer.save)()
                 widget = widgetmodel_ptr_to_widget_uuid(
                     configurate_widget(data)
@@ -104,6 +107,8 @@ class WidgetNamespace(socketio.AsyncNamespace):
             )
             await sync_to_async(serializer.is_valid)(raise_exception=True)
 
+            widget_desktop = await sync_to_async(get_desktop_from_object)(widget)
+
             if serializer.validated_data.get(
                     'z_index'
             ) > MAX_Z_INDEX_ON_DESKTOP - 1:
@@ -113,9 +118,8 @@ class WidgetNamespace(socketio.AsyncNamespace):
 
                 leveled = await sync_to_async(leveler_z_index)(z_indexes)
                 leveled_count = await sync_to_async(len)(leveled)
-                desktop = widget.desktop
-                desktop.max_z_index = leveled_count - 1
-                await sync_to_async(desktop.save)()
+                widget_desktop.max_z_index = leveled_count - 1
+                await sync_to_async(widget_desktop.save)()
                 for uuid, z_index in leveled.items():
                     widget = await sync_to_async(
                         WidgetModel.objects.get
@@ -128,9 +132,11 @@ class WidgetNamespace(socketio.AsyncNamespace):
                     )(raise_exception=True)
                     await sync_to_async(serializer.save)()
 
-            data = await sync_to_async(serializer.save)()
+            widget = await sync_to_async(serializer.save)()
+            widget_desktop.max_z_index = widget.z_index
+            await sync_to_async(widget_desktop.save)()
 
-            widget = widgetmodel_ptr_to_widget_uuid(configurate_widget(data))
+            widget = widgetmodel_ptr_to_widget_uuid(configurate_widget(widget))
             await self.emit('update_widget_answer', data=widget, to=sid)
         except Exception as ex:
             await self.emit('error', data=str(ex), to=sid)

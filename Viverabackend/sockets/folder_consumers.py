@@ -8,7 +8,7 @@ from api.v1.serializers import FolderSerializer
 from users.models import BufferUserSocketModel
 from widgets.models import FolderModel
 
-from .utils import get_desktop_uuid_from_object
+from .utils import get_desktop_from_object
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
@@ -37,12 +37,12 @@ class FolderNamespace(socketio.AsyncNamespace):
 
             folders = []
             async for folder in user_folders:
-                folder_desktop = await sync_to_async(get_desktop_uuid_from_object)(folder)
+                folder_desktop = await sync_to_async(get_desktop_from_object)(folder)
                 folders.append(
                     {
                         "uuid": str(folder.uuid),
                         "folder_name": str(folder.folder_name),
-                        "desktop": str(folder_desktop)
+                        "desktop": str(folder_desktop.uuid)
                     }
                 )
             await self.emit('get_all_folders_answer', data=folders, to=sid)
