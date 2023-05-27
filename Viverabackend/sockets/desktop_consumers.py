@@ -40,7 +40,8 @@ class DesktopNamespace(socketio.AsyncNamespace):
                 desktops.append(
                     {
                         "uuid": str(desktop.uuid),
-                        "desktop_name": str(desktop.desktop_name)
+                        "desktop_name": str(desktop.desktop_name),
+                        "max_z_index": int(desktop.max_z_index)
                     }
                 )
             await self.emit('get_all_desktops_answer', data=desktops, to=sid)
@@ -73,7 +74,8 @@ class DesktopNamespace(socketio.AsyncNamespace):
 
                 message = {
                     "uuid": str(desktop.uuid),
-                    "desktop_name": str(desktop.desktop_name)
+                    "desktop_name": str(desktop.desktop_name),
+                    "max_z_index": int(desktop.max_z_index)
                 }
                 await self.emit('post_desktop_answer', data=message, to=sid)
         except Exception as ex:
@@ -82,16 +84,16 @@ class DesktopNamespace(socketio.AsyncNamespace):
     async def on_update_desktop(self, sid, data):
         """Update One desktop for current User"""
         try:
-            folder = await sync_to_async(
+            desktop = await sync_to_async(
                 DesktopModel.objects.get
             )(uuid=data.get('uuid'))
-            serializer = DesktopSerializer(folder, data=data, partial=True)
+            serializer = DesktopSerializer(desktop, data=data, partial=True)
             await sync_to_async(serializer.is_valid)(raise_exception=True)
             data = await sync_to_async(serializer.save)()
 
-            folder = model_to_dict(data)
-            folder.pop('user_uuid')
-            await self.emit('update_desktop_answer', data=folder, to=sid)
+            desktop = model_to_dict(data)
+            desktop.pop('user_uuid')
+            await self.emit('update_desktop_answer', data=desktop, to=sid)
         except Exception as ex:
             await self.emit('error', data=str(ex), to=sid)
 

@@ -14,6 +14,7 @@ from .tweets import get_tweets_from_username
 from .utils import (configurate_widget, get_desktop_from_sid,
                     widget_desktop_to_z_index_uuid,
                     widgetmodel_ptr_to_widget_uuid)
+from widgets.models import DesktopModel
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
@@ -111,6 +112,10 @@ class WidgetNamespace(socketio.AsyncNamespace):
                 )(widget)
 
                 leveled = await sync_to_async(leveler_z_index)(z_indexes)
+                leveled_count = await sync_to_async(len)(leveled)
+                desktop = widget.desktop
+                desktop.max_z_index = leveled_count - 1
+                await sync_to_async(desktop.save)()
                 for uuid, z_index in leveled.items():
                     widget = await sync_to_async(
                         WidgetModel.objects.get

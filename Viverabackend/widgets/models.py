@@ -24,6 +24,7 @@ class DesktopModel(models.Model):
         related_name='buffer_user'
     )
     desktop_name = models.CharField(max_length=100)
+    max_z_index = models.IntegerField(default=0)
 
 
 class FolderModel(models.Model):
