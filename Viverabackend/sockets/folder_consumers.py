@@ -8,6 +8,8 @@ from api.v1.serializers import FolderSerializer
 from users.models import BufferUserSocketModel
 from widgets.models import FolderModel
 
+from .utils import dict_uuid_to_str
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
 import django
@@ -36,11 +38,7 @@ class FolderNamespace(socketio.AsyncNamespace):
             folders = []
             async for folder in user_folders:
                 folders.append(
-                    {
-                        "uuid": str(folder.uuid),
-                        "folder_name": str(folder.folder_name),
-                        "desktop": str(folder.desktop)
-                    }
+                    dict_uuid_to_str(model_to_dict(folder))
                 )
             await self.emit('get_all_folders_answer', data=folders, to=sid)
 
@@ -62,11 +60,7 @@ class FolderNamespace(socketio.AsyncNamespace):
 
             folder = await sync_to_async(serializer.save)()
 
-            message = {
-                "uuid": str(folder.uuid),
-                "folder_name": str(folder.folder_name),
-                "desktop": str(folder.desktop.uuid)
-            }
+            message = dict_uuid_to_str(model_to_dict(folder))
             await self.emit('post_folder_answer', data=message, to=sid)
 
         except Exception as ex:
