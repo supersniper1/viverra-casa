@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface IWidgetSlice {
+  resourcetype: "WidgetsNoteModel";
   widget_tag: string;
   widget_uuid: string;
   widget_size_x: number;

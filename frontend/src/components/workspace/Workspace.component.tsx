@@ -16,7 +16,7 @@ export const Workspace: FunctionComponent = () => {
 
   console.log(widgets);
 
-  const { WidgetsRefreshList, AddWidgetOpen } = useActions();
+  const { WidgetsRefreshList, AddWidgetOpen, WidgetFolderOpen } = useActions();
 
   const uncollapse = (widget: IWidgetSlice) => {
     const collapsedWidget = {
@@ -30,6 +30,10 @@ export const Workspace: FunctionComponent = () => {
     });
   };
 
+  const openFolder = () => {
+    WidgetFolderOpen();
+  };
+
   return (
     <div
       className={cn(
@@ -40,6 +44,7 @@ export const Workspace: FunctionComponent = () => {
       )}
     >
       <Component.AddWidgetModal />
+      <Component.WidgetFolderModal />
       {widgets.map(
         (widget) =>
           widget.desktop === activeDesktop &&
@@ -49,11 +54,15 @@ export const Workspace: FunctionComponent = () => {
           )
       )}
       <div className={s.bottomPanel}>
-        {folders.map((folder) => folder.folder_name === "note" && (
-          <button key={folder.uuid}>
-            <Icons.NotesWidget className={s.NotesCollapsedIcon} />
-          </button>
-        ))}
+        {folders.map(
+          (folder) =>
+            folder.folder_name === "notes" &&
+            folder.desktop === activeDesktop && (
+              <button key={folder.uuid} onClick={openFolder}>
+                <Icons.NotesWidget className={s.NotesCollapsedIcon} />
+              </button>
+            )
+        )}
         {widgets.map(
           (widget) =>
             widget.desktop === activeDesktop &&

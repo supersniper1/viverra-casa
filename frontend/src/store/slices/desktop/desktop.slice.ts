@@ -9,6 +9,7 @@ export interface IDesktops {
 export interface IDesktop {
   uuid: string;
   desktop_name: string;
+  max_z_index: number;
 }
 
 const initialState: IDesktops = {

@@ -3,12 +3,11 @@ import { IWidgetSlice } from "@store/slices/widgets/widgets.slice";
 import { socket } from "@api/ws/socket";
 import { useActions } from "@hooks/redux.useActions";
 import s from "./notes.module.scss";
-import Draggable, { DraggableData, DraggableEvent } from "react-draggable";
-import { Resizable } from "re-resizable";
 import { Icons } from "@assets/components/export";
 import cn from "classnames";
 import { useTypedSelector } from "@/hooks/redux.useTypedSelector";
-import { IFolders } from "@/store/slices/folders/folders.slice";
+import { IFolder } from "@/store/slices/folders/folders.slice";
+import { Rnd } from "react-rnd";
 
 interface INotes {
   widget: IWidgetSlice;
@@ -19,15 +18,24 @@ export const Notes: FunctionComponent<INotes> = ({ widget }) => {
 
   const widgets = useTypedSelector((state) => state.Widgets.all_widgets);
   const folders = useTypedSelector((state) => state.Folders.all_folders);
+  const activeDesktop = useTypedSelector((state) => state.Desktop.active);
+  const desktops = useTypedSelector((state) => state.Desktop.all_desktops);
+  const maxZIndex = desktops.filter(
+    (element) => element.uuid === activeDesktop
+  )[0].max_z_index;
 
-  const { WidgetsRefreshList, SetFolders } = useActions();
+  const { WidgetsRefreshList, SetFolders, SetDesktops } = useActions();
 
   useMemo(() => {
     socket.emit("update_widget", notesWidget);
-    console.log(notesWidget);
+    socket.emit("get_all_desktops", null);
+    socket.on("get_all_desktops_answer", (message: any) => {
+      SetDesktops(message);
+    });
   }, [notesWidget]);
 
   useMemo(() => {
+    console.log("sad");
     socket.emit("get_all_widgets", null);
     socket.on("get_all_widgets_answer", (message: any) => {
       WidgetsRefreshList(message);
@@ -35,7 +43,7 @@ export const Notes: FunctionComponent<INotes> = ({ widget }) => {
   }, [notesWidget.is_collapsed]);
 
   const deleteWidget = () => {
-    socket.emit("delete_widget", { widget_uuid: widget.widget_uuid });
+    socket.emit("delete_widget", { widget_uuid: notesWidget.widget_uuid });
     socket.emit("get_all_widgets", null);
     socket.on("get_all_widgets_answer", (message: any) => {
       WidgetsRefreshList(message);
@@ -43,22 +51,43 @@ export const Notes: FunctionComponent<INotes> = ({ widget }) => {
   };
 
   const collapseWidget = () => {
-    if (widgets.filter((element) => element.widget_tag === "notes" &&
-     element.is_collapsed === true).length > 1) // if collapsed notes more than 2 
-      {
-      if (folders.filter((element) => element.folder_name === "notes").length !== 1) // if notes don't have folder
-       {
-        socket.emit("post_folder", {"folder_name": "notes"})
-        socket.emit("get_all_folders", null);
-        socket.on("get_all_folders_answer", (message: IFolders) => {
-          SetFolders(message);
+    if (
+      widgets.filter((element) => element.is_collapsed === true).length >= 1
+    ) {
+      // if collapsed notes more than 2
+      console.log("if collapsed notes more than 2");
+      if (
+        folders.filter((element) => element.folder_name === "notes").length !==
+        1
+      ) {
+        // if notes don't have folder
+        console.log("if notes don't have folder");
+        socket.emit("post_folder", {
+          folder_name: "notes",
+          desktop: activeDesktop,
         });
+        socket.emit("get_all_folders", null);
+        socket.on("get_all_folders_answer", (message: any) => {
+          SetFolders(message);
+          setNotesWidget((prev) => ({
+            ...prev,
+            is_collapsed: true,
+            folder: message.filter(
+              (element: IFolder) => element.folder_name === "notes"
+            )[0].uuid,
+          }));
+        });
+      } else {
+        setNotesWidget((prev) => ({
+          ...prev,
+          is_collapsed: true,
+          folder: folders.filter(
+            (element) =>
+              element.folder_name === "notes" &&
+              element.desktop === activeDesktop
+          )[0].uuid,
+        }));
       }
-      setNotesWidget((prev) => ({
-        ...prev,
-        is_collapsed: true,
-        folder: folders.filter((element) => element.folder_name === "notes")[0].uuid,
-      }));
     } else {
       setNotesWidget((prev) => ({
         ...prev,
@@ -67,14 +96,7 @@ export const Notes: FunctionComponent<INotes> = ({ widget }) => {
     }
   };
 
-  const setZindex = () => {
-    setNotesWidget((prev) => ({
-      ...prev,
-      z_index: prev.z_index + 1,
-    }));
-  };
-
-  const draggableOnStop = (e: DraggableEvent, data: DraggableData) => {
+  const draggableOnStop = (e: any, data: any) => {
     setNotesWidget((prev) => ({
       ...prev,
       widget_x: data.lastX,
@@ -82,14 +104,19 @@ export const Notes: FunctionComponent<INotes> = ({ widget }) => {
     }));
   };
 
+  const changeZIndex = () => {
+    setNotesWidget((prev) => ({
+      ...prev,
+      z_index: maxZIndex + 1,
+    }));
+  };
+
   return (
-    <Draggable
-      handle=".handle"
-      defaultPosition={{ x: widget.widget_x, y: widget.widget_y }}
-      onStop={(e, data) => draggableOnStop(e, data)}
-    >
-      <Resizable
-        style={{ zIndex: widget.z_index }}
+    <div className={s.Resize} style={{ zIndex: notesWidget.z_index }}>
+      <Rnd
+        handle=".handle"
+        defaultPosition={{ x: notesWidget.widget_x, y: notesWidget.widget_y }}
+        onDragStop={(e, data) => draggableOnStop(e, data)}
         className={s.notesWidget}
         size={{
           width: notesWidget.widget_size_x,
@@ -103,7 +130,7 @@ export const Notes: FunctionComponent<INotes> = ({ widget }) => {
           }))
         }
       >
-        <div onMouseDown={setZindex}>
+        <div onMouseDown={changeZIndex}>
           <div className={s.TopPanel}>
             <div className={cn("handle", s.Handle)}></div>
             <div className={s.Buttons}>
@@ -126,7 +153,7 @@ export const Notes: FunctionComponent<INotes> = ({ widget }) => {
             className={s.Textarea}
           ></textarea>
         </div>
-      </Resizable>
-    </Draggable>
+      </Rnd>
+    </div>
   );
 };

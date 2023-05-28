@@ -16,6 +16,8 @@ export const Sidebar: FunctionComponent = () => {
 
   const { SetActive, SetDesktops, SetColor, Logout } = useActions();
 
+  console.log(desktops)
+
   const getDesktops = () => {
     socket.emit("get_all_desktops", null);
     socket.on("get_all_desktops_answer", (message: any) => {
