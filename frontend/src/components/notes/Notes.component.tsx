@@ -130,7 +130,7 @@ export const Notes: FunctionComponent<INotes> = ({ widget }) => {
           }))
         }
       >
-        <div onMouseDown={changeZIndex}>
+        <div onMouseDown={changeZIndex} className={s.Test}>
           <div className={s.TopPanel}>
             <div className={cn("handle", s.Handle)}></div>
             <div className={s.Buttons}>
