@@ -1,16 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface IFolders {
-  all_folders: IFolder[]
+  all_folders: IFolder[];
 }
 
 export interface IFolder {
   uuid: string;
   folder_name: string;
+  desktop: string;
 }
 
 const initialState: IFolders = {
-  all_folders: []
+  all_folders: [],
 };
 
 export const FoldersSlice = createSlice({
