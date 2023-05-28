@@ -57,7 +57,7 @@ async def get_user_from_token(token: str) -> UserModel:
         'client_secret': CLIENT_SECRET,
         'grant_type': 'authorization_code',
         'code': token,
-        'redirect_uri': "http://127.0.0.1:2004/set-token/",
+        'redirect_uri': "http://sovraska.ru/set-token/",
         'scope': "identify",
     }
     headers = {
