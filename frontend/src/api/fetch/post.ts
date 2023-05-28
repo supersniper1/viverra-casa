@@ -1,5 +1,5 @@
 export const refreshAccessTokenGet = async (token: string) => {
-  const response = await fetch("http://127.0.0.1/api/v1/auth/", {
+  const response = await fetch("http://sovraska.ru/api/v1/auth/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
