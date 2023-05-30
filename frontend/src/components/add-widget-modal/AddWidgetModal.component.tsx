@@ -21,7 +21,7 @@ export const AddWidgetModal: FunctionComponent = () => {
     is_collapsed: false,
     text: "test text",
     resourcetype: "WidgetsNoteModel",
-    desktop: activeDesktop,
+    desktop: activeDesktop.uuid,
   };
 
   const postWidget = () => {

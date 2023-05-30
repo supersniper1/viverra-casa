@@ -19,35 +19,20 @@ export const Notes: FunctionComponent<INotes> = ({ widget }) => {
   const widgets = useTypedSelector((state) => state.Widgets.all_widgets);
   const folders = useTypedSelector((state) => state.Folders.all_folders);
   const activeDesktop = useTypedSelector((state) => state.Desktop.active);
-  const desktops = useTypedSelector((state) => state.Desktop.all_desktops);
-  const maxZIndex = desktops.filter(
-    (element) => element.uuid === activeDesktop
-  )[0].max_z_index;
 
-  const { WidgetsRefreshList, SetFolders, SetDesktops } = useActions();
+  const { SetFolders, UpdateWidget, DeleteWidget, SetZIndex } = useActions();
 
   useMemo(() => {
     socket.emit("update_widget", notesWidget);
-    socket.emit("get_all_desktops", null);
-    socket.on("get_all_desktops_answer", (message: any) => {
-      SetDesktops(message);
-    });
+    SetZIndex()
+    UpdateWidget({prev: widget, new: notesWidget})
   }, [notesWidget]);
 
-  useMemo(() => {
-    console.log("sad");
-    socket.emit("get_all_widgets", null);
-    socket.on("get_all_widgets_answer", (message: any) => {
-      WidgetsRefreshList(message);
-    });
-  }, [notesWidget.is_collapsed]);
-
-  const deleteWidget = () => {
+  const deleteWidget = (test: IWidgetSlice) => {
     socket.emit("delete_widget", { widget_uuid: notesWidget.widget_uuid });
-    socket.emit("get_all_widgets", null);
-    socket.on("get_all_widgets_answer", (message: any) => {
-      WidgetsRefreshList(message);
-    });
+    socket.on("delete_widget_answer", (message) => console.log(message))
+    widgets.map((element) => console.log(element.widget_uuid))
+    DeleteWidget(test)
   };
 
   const collapseWidget = () => {
@@ -64,7 +49,7 @@ export const Notes: FunctionComponent<INotes> = ({ widget }) => {
         console.log("if notes don't have folder");
         socket.emit("post_folder", {
           folder_name: "notes",
-          desktop: activeDesktop,
+          desktop: activeDesktop.uuid,
         });
         socket.emit("get_all_folders", null);
         socket.on("get_all_folders_answer", (message: any) => {
@@ -84,7 +69,7 @@ export const Notes: FunctionComponent<INotes> = ({ widget }) => {
           folder: folders.filter(
             (element) =>
               element.folder_name === "notes" &&
-              element.desktop === activeDesktop
+              element.desktop === activeDesktop.uuid
           )[0].uuid,
         }));
       }
@@ -107,15 +92,16 @@ export const Notes: FunctionComponent<INotes> = ({ widget }) => {
   const changeZIndex = () => {
     setNotesWidget((prev) => ({
       ...prev,
-      z_index: maxZIndex + 1,
+      z_index: activeDesktop.max_z_index + 1,
     }));
   };
 
   return (
     <div className={s.Resize} style={{ zIndex: notesWidget.z_index }}>
       <Rnd
-        handle=".handle"
-        defaultPosition={{ x: notesWidget.widget_x, y: notesWidget.widget_y }}
+        minWidth={150}
+        minHeight={150}
+        default={{ x: widget.widget_x, y: widget.widget_y, width: notesWidget.widget_size_x, height: notesWidget.widget_size_y}}
         onDragStop={(e, data) => draggableOnStop(e, data)}
         className={s.notesWidget}
         size={{
@@ -137,7 +123,7 @@ export const Notes: FunctionComponent<INotes> = ({ widget }) => {
               <button className={s.CloseButton} onClick={collapseWidget}>
                 <Icons.CollapseWidget />
               </button>
-              <button className={s.CloseButton} onClick={deleteWidget}>
+              <button className={s.CloseButton} onClick={() => deleteWidget(widget)}>
                 <Icons.CloseWidget />
               </button>
             </div>

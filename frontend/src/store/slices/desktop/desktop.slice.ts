@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export interface IDesktops {
   color: "white" | "light-pink" | "pink";
-  active: string | undefined;
+  active: IDesktop;
   all_desktops: IDesktop[];
 }
 
@@ -14,7 +14,11 @@ export interface IDesktop {
 
 const initialState: IDesktops = {
   color: "white",
-  active: undefined,
+  active: {
+    uuid: "",
+    desktop_name: "",
+    max_z_index: 0,
+  },
   all_desktops: [],
 };
 
@@ -30,6 +34,9 @@ export const DesktopSlice = createSlice({
     },
     SetColor: (state, action) => {
       state.color = action.payload;
+    },
+    SetZIndex: (state) => {
+      state.active.max_z_index++
     },
   },
 });

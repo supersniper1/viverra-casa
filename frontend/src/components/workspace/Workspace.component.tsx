@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { useTypedSelector } from "@hooks/redux.useTypedSelector";
 import { Component } from "@components/export.components";
 import s from "./workspace.module.scss";
@@ -13,7 +13,7 @@ export const Workspace: FunctionComponent = () => {
   const activeDesktop = useTypedSelector((state) => state.Desktop.active);
   const desktopColor = useTypedSelector((state) => state.Desktop.color);
   const folders = useTypedSelector((state) => state.Folders.all_folders);
-
+  
   console.log(widgets);
 
   const { WidgetsRefreshList, AddWidgetOpen, WidgetFolderOpen } = useActions();
@@ -47,7 +47,7 @@ export const Workspace: FunctionComponent = () => {
       <Component.WidgetFolderModal />
       {widgets.map(
         (widget) =>
-          widget.desktop === activeDesktop &&
+          widget.desktop === activeDesktop.uuid &&
           widget.is_collapsed === false &&
           widget.widget_tag === "note" && (
             <Component.Notes key={widget.widget_uuid} widget={widget} />
@@ -57,7 +57,7 @@ export const Workspace: FunctionComponent = () => {
         {folders.map(
           (folder) =>
             folder.folder_name === "notes" &&
-            folder.desktop === activeDesktop && (
+            folder.desktop === activeDesktop.uuid && (
               <button key={folder.uuid} onClick={openFolder}>
                 <Icons.NotesWidget className={s.NotesCollapsedIcon} />
               </button>
@@ -65,7 +65,7 @@ export const Workspace: FunctionComponent = () => {
         )}
         {widgets.map(
           (widget) =>
-            widget.desktop === activeDesktop &&
+            widget.desktop === activeDesktop.uuid &&
             widget.is_collapsed === true &&
             widget.widget_tag === "note" &&
             widget.folder === null && (

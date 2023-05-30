@@ -3,9 +3,10 @@ import s from "./sidebar.module.scss";
 import { Icons } from "@assets/components/export";
 import { useTypedSelector } from "@/hooks/redux.useTypedSelector";
 import { useActions } from "@/hooks/redux.useActions";
-import cn from "classnames"
+import cn from "classnames";
 import { socket } from "@/api/ws/socket";
 import { IDesktop } from "@/store/slices/desktop/desktop.slice";
+import { IWidgetsSlice } from "@/store/slices/widgets/widgets.slice";
 
 export const Sidebar: FunctionComponent = () => {
   const [editName, setEditName] = useState<string | undefined>(undefined);
@@ -14,32 +15,30 @@ export const Sidebar: FunctionComponent = () => {
   const desktops = useTypedSelector((state) => state.Desktop.all_desktops);
   const activeDesktop = useTypedSelector((state) => state.Desktop.active);
 
-  const { SetActive, SetDesktops, SetColor, Logout } = useActions();
-
-  console.log(desktops)
+  const { SetActive, SetDesktops, SetColor, Logout, WidgetsRefreshList } = useActions();
 
   const getDesktops = () => {
     socket.emit("get_all_desktops", null);
     socket.on("get_all_desktops_answer", (message: any) => {
       SetDesktops(message);
     });
-  }
+  };
 
   const addDesktop = (name: string) => {
-    socket.emit("post_desktop", {"desktop_name": name})
-    getDesktops()
-  }
+    socket.emit("post_desktop", { desktop_name: name });
+    getDesktops();
+  };
 
   const deleteDesktop = (id: string) => {
-    socket.emit("delete_desktop", {"uuid": id})
-    getDesktops()
-  }
+    socket.emit("delete_desktop", { uuid: id });
+    getDesktops();
+  };
 
   const updateDesktopName = (desktop: IDesktop) => {
-    socket.emit("update_desktop", desktop)
+    socket.emit("update_desktop", desktop);
     setEditName(undefined);
-    getDesktops()
-  }
+    getDesktops();
+  };
 
   return (
     <div className={s.Sidebar}>
@@ -49,10 +48,25 @@ export const Sidebar: FunctionComponent = () => {
         </h1>
         <div>
           {desktops.map((desktop, index) => (
-            <div key={desktop.uuid} className={cn(s.Desktop, desktop.uuid === activeDesktop && s.ActiveDesktop)}>
+            <div
+              key={desktop.uuid}
+              className={cn(
+                s.Desktop,
+                desktop.uuid === activeDesktop.uuid && s.ActiveDesktop
+              )}
+            >
               <div
                 className={s.Desktop}
-                onClick={() => SetActive(desktop.uuid)}
+                onClick={() => {
+                  SetActive(desktop);
+                  socket.emit("get_all_widgets", null);
+                  socket.on(
+                    "get_all_widgets_answer",
+                    (message: IWidgetsSlice) => {
+                      WidgetsRefreshList(message);
+                    }
+                  );
+                }}
               >
                 <Icons.Desktop index={index} />
                 {desktop.uuid === editName ? (
@@ -64,7 +78,6 @@ export const Sidebar: FunctionComponent = () => {
                         ...desktop,
                         desktop_name: e.target.value,
                       });
-                
                     }}
                   />
                 ) : (

@@ -42,7 +42,7 @@ export const Main: FunctionComponent = () => {
       });
       socket.on("get_all_desktops_answer", (message: any) => {
         SetDesktops(message);
-        SetActive(message[0].uuid);
+        SetActive(message[0]);
       });
     }
   }, []);
