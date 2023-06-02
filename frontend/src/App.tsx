@@ -10,6 +10,7 @@ import { Component } from "@/components/export.components";
 const AppRouting: FunctionComponent = () => (
   <BrowserRouter>
     <Routes>
+      {/* <Route path="/main" element={<Component.ReactZoom/>} /> */}
       <Route path="/main" element={<View.Main />} />
       <Route path="*" element={<Navigate to="/main" />} />
       <Route path="/set-token/*" element={<View.Redirect />} />

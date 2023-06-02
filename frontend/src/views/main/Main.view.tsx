@@ -49,6 +49,9 @@ export const Main: FunctionComponent = () => {
 
   return (
     <div className={s.Main}>
+      <Component.AddWidgetModal />
+      <Component.WidgetFolderModal />
+      <Component.BottomDock/>
       <Component.Sidebar />
       <Component.Workspace />
     </div>

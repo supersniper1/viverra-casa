@@ -1,0 +1,27 @@
+.bottomPanel {
+  width: 600px;
+  height: 60px;
+  position: fixed;
+  z-index: 9997;
+  bottom: 40px;
+  left: calc(50vw - 300px);
+
+  background: #ffffff;
+  box-shadow: 0 4px 10px rgba(17, 23, 34, 0.05);
+  border-radius: 15px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px;
+}
+
+.addWidgetIcon {
+  height: 24px;
+  width: 24px;
+}
+
+.NotesCollapsedIcon {
+  width: 44px;
+  height: 44px;
+}

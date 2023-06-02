@@ -4,6 +4,7 @@ export interface IDesktops {
   color: "white" | "light-pink" | "pink";
   active: IDesktop;
   all_desktops: IDesktop[];
+  remove_queue: IDesktop[];
 }
 
 export interface IDesktop {
@@ -20,6 +21,7 @@ const initialState: IDesktops = {
     max_z_index: 0,
   },
   all_desktops: [],
+  remove_queue: [],
 };
 
 export const DesktopSlice = createSlice({
@@ -36,7 +38,18 @@ export const DesktopSlice = createSlice({
       state.color = action.payload;
     },
     SetZIndex: (state) => {
-      state.active.max_z_index++
+      state.active.max_z_index++;
+    },
+    SetQueue: (state, action) => {
+      state.remove_queue = [...state.remove_queue, action.payload];
+    },
+    UndoDeleteDesktop: (state, action) => {
+      state.remove_queue = state.remove_queue.filter(
+        (element) => element !== action.payload
+      );
+    },
+    DeleteDesktop: (state, action) => {
+      state.remove_queue = action.payload
     },
   },
 });
