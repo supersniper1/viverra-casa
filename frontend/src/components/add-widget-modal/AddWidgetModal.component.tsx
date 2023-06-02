@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useRef } from "react";
 import s from "./add-widget-modal.module.scss";
 import { Icons } from "@/assets/components/export";
 import { useTypedSelector } from "@hooks/redux.useTypedSelector";
@@ -6,6 +6,8 @@ import { useActions } from "@hooks/redux.useActions";
 import { socket } from "@api/ws/socket";
 
 export const AddWidgetModal: FunctionComponent = () => {
+  const windowSize = useRef([window.innerWidth, window.innerHeight]);
+  
   const modalState = useTypedSelector((state) => state.Modal.add_widget);
   const activeDesktop = useTypedSelector((state) => state.Desktop.active);
 
@@ -13,15 +15,15 @@ export const AddWidgetModal: FunctionComponent = () => {
 
   const notesObj = {
     widget_tag: "note",
-    widget_x: 9,
-    widget_y: 8,
+    widget_x: Math.round(windowSize.current[0]/2 - 100),
+    widget_y: Math.round(windowSize.current[1]/2 - 100),
     widget_size_x: 200,
     widget_size_y: 200,
-    z_index: 1,
+    z_index: activeDesktop.max_z_index + 1,
     is_collapsed: false,
     text: "test text",
     resourcetype: "WidgetsNoteModel",
-    desktop: activeDesktop,
+    desktop: activeDesktop.uuid,
   };
 
   const postWidget = () => {

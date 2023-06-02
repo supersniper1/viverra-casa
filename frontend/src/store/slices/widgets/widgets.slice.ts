@@ -33,7 +33,12 @@ export const WidgetsSlice = createSlice({
       state.all_widgets = action.payload;
     },
     UpdateWidget: (state, action) => {
-      console.log(state, action);
+      state.all_widgets.filter((element) => element !== action.payload.prev).push(action.payload.new)
+      console.log("updated")
+    },
+    DeleteWidget: (state, action) => {
+      state.all_widgets = state.all_widgets.filter((element) => element.widget_uuid !== action.payload.widget_uuid)
+      console.log(action.payload.widget_uuid)
     },
   },
 });

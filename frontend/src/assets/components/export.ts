@@ -12,6 +12,7 @@ import { Theme } from "./theme/theme.icon";
 import { Trash } from "./trash/trash.icon";
 import { User } from "./user/user.icon";
 import { Desktop } from "./desktop/desktop.icon";
+import { Arrow } from "./arrow/arrow.icon";
 
 export const Icons = {
   DiscordLogo,
@@ -28,4 +29,5 @@ export const Icons = {
   Theme,
   Trash,
   User,
+  Arrow,
 };

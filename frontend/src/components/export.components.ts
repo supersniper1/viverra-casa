@@ -5,6 +5,8 @@ import { LoginModal } from "./login-modal/LoginModal.component";
 import { AddWidgetModal } from "./add-widget-modal/AddWidgetModal.component";
 import { Sidebar } from "./sidebar/Sidebar.component";
 import { WidgetFolderModal } from "./widget-folder-modal/WidgetFolderModal.component";
+import { ReactZoom } from "./react-zoom/ReactZoom.component";
+import { BottomDock } from "./bottom-dock/BottomDock.component";
 
 export const Component = {
   Notes,
@@ -14,4 +16,6 @@ export const Component = {
   AddWidgetModal,
   Sidebar,
   WidgetFolderModal,
+  ReactZoom,
+  BottomDock,
 };

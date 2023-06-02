@@ -13,7 +13,7 @@ export const WidgetFolderModal: FunctionComponent = () => {
   const activeDesktop = useTypedSelector((state) => state.Desktop.active);
   const folders = useTypedSelector((state) => state.Folders.all_folders);
 
-  const { WidgetFolderClose, WidgetsRefreshList, SetFolders } = useActions();
+  const { WidgetFolderClose, WidgetsRefreshList, SetFolders, UpdateWidget } = useActions();
 
   const uncollapse = (widget: IWidgetSlice) => {
     const collapsedWidget = {
@@ -21,14 +21,11 @@ export const WidgetFolderModal: FunctionComponent = () => {
       is_collapsed: false,
     };
     socket.emit("update_widget", collapsedWidget);
-    socket.emit("get_all_widgets", null);
-    socket.on("get_all_widgets_answer", (message: any) => {
-      WidgetsRefreshList(message);
-    });
+    UpdateWidget({prev: widget, new: collapsedWidget})
     if (
       widgets.filter(
         (element) =>
-          element.desktop === activeDesktop &&
+          element.desktop === activeDesktop.uuid &&
           element.is_collapsed === true &&
           element.widget_tag === "note"
       ).length <= 1
@@ -60,7 +57,7 @@ export const WidgetFolderModal: FunctionComponent = () => {
       <div className={s.ModalWindow} onClick={(e) => e.stopPropagation()}>
         {widgets.map(
           (widget) =>
-            widget.desktop === activeDesktop &&
+            widget.desktop === activeDesktop.uuid &&
             widget.is_collapsed === true &&
             widget.widget_tag === "note" && (
               <div

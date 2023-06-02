@@ -1,27 +1,10 @@
 @import "@ui/variables.module.scss";
 
 .workspace {
-  padding: 20px;
-  width: 100%;
+  width: 100vw;
   height: 100vh;
 }
-.bottomPanel {
-  width: 600px;
-  height: 60px;
-  position: absolute;
-  z-index: 999;
-  bottom: 40px;
-  left: calc(50vw - 300px);
 
-  background: #ffffff;
-  box-shadow: 0 4px 10px rgba(17, 23, 34, 0.05);
-  border-radius: 15px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-  padding: 0 10px;
-}
 .button {
   height: 24px;
   width: 24px;
@@ -30,25 +13,18 @@
   cursor: pointer;
   padding: 0;
 }
-.addWidgetIcon {
-  height: 24px;
-  width: 24px;
-}
-.NotesCollapsedIcon {
-  width: 44px;
-  height: 44px;
-}
 
 .ColorWhite {
   background: $white_background_color;
 }
+
 .ColorLightPink {
   background: $light_pink_background_color;
 }
+
 .ColorPink {
   background: $pink_background_color;
 }
-
 
 // linear-gradient(
 //     108.73deg,
