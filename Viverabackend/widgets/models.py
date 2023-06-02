@@ -100,7 +100,7 @@ class WidgetsTwitterModel(WidgetModel):
 
 
 class WidgetsNoteModel(WidgetModel):
-    text = models.TextField()
+    text = models.TextField(blank=True, null=True)
 
     class Meta:
         verbose_name = "Note Widget"
