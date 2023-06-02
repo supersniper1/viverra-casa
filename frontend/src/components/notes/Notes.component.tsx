@@ -11,9 +11,10 @@ import { Rnd } from "react-rnd";
 
 interface INotes {
   widget: IWidgetSlice;
+  setIsMoveable: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const Notes: FunctionComponent<INotes> = ({ widget }) => {
+export const Notes: FunctionComponent<INotes> = ({ widget, setIsMoveable }) => {
   const [notesWidget, setNotesWidget] = useState(widget);
 
   const widgets = useTypedSelector((state) => state.Widgets.all_widgets);
@@ -87,6 +88,7 @@ export const Notes: FunctionComponent<INotes> = ({ widget }) => {
       widget_x: data.lastX,
       widget_y: data.lastY,
     }));
+    setIsMoveable(false)
   };
 
   const changeZIndex = () => {
@@ -103,6 +105,7 @@ export const Notes: FunctionComponent<INotes> = ({ widget }) => {
         minHeight={150}
         default={{ x: widget.widget_x, y: widget.widget_y, width: notesWidget.widget_size_x, height: notesWidget.widget_size_y}}
         onDragStop={(e, data) => draggableOnStop(e, data)}
+        onDragStart={() => setIsMoveable(true)}
         className={s.notesWidget}
         size={{
           width: notesWidget.widget_size_x,

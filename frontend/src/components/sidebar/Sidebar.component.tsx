@@ -13,7 +13,7 @@ import { toast, ToastContainer } from "react-toastify";
 export const Sidebar: FunctionComponent = () => {
   const [editName, setEditName] = useState<string | undefined>(undefined);
   const [inputValue, setInputValue] = useState<string | undefined>(undefined);
-  const [minimized, setMinimized] = useState<boolean>(false);
+  const [minimized, setMinimized] = useState<boolean>(true);
 
   const desktops = useTypedSelector((state) => state.Desktop.all_desktops);
   const activeDesktop = useTypedSelector((state) => state.Desktop.active);
