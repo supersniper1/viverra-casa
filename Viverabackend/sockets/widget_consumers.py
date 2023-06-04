@@ -104,13 +104,14 @@ class WidgetNamespace(socketio.AsyncNamespace):
             widget = await sync_to_async(
                 WidgetModel.objects.get
             )(uuid=data.get('widget_uuid'))
-            await sync_to_async(pprint)(data)
+
             serializer = WidgetsPolymorphicSerializer(
                 widget, data=data, partial=True
             )
             await sync_to_async(serializer.is_valid)(raise_exception=True)
 
             widget_desktop = await sync_to_async(get_desktop_from_object)(widget)
+
             if serializer.validated_data.get(
                     'z_index'
             ):
