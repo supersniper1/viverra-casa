@@ -1,9 +1,11 @@
 import logging
 import os
 from pathlib import Path
+from pprint import pprint
 
 import socketio
 from asgiref.sync import sync_to_async
+from django.forms import model_to_dict
 from dotenv import load_dotenv
 
 from api.v1.serializers import TestSerializer, WidgetsPolymorphicSerializer
@@ -102,42 +104,48 @@ class WidgetNamespace(socketio.AsyncNamespace):
             widget = await sync_to_async(
                 WidgetModel.objects.get
             )(uuid=data.get('widget_uuid'))
+
             serializer = WidgetsPolymorphicSerializer(
                 widget, data=data, partial=True
             )
             await sync_to_async(serializer.is_valid)(raise_exception=True)
 
             widget_desktop = await sync_to_async(get_desktop_from_object)(widget)
-
             if serializer.validated_data.get(
                     'z_index'
-            ) > MAX_Z_INDEX_ON_DESKTOP - 1:
-                z_indexes = await sync_to_async(
-                    widget_desktop_to_z_index_uuid
-                )(widget)
+            ):
+                if serializer.validated_data.get(
+                        'z_index'
+                ) > MAX_Z_INDEX_ON_DESKTOP - 1:
+                    z_indexes = await sync_to_async(
+                        widget_desktop_to_z_index_uuid
+                    )(widget)
 
-                leveled = await sync_to_async(leveler_z_index)(z_indexes)
-                leveled_count = await sync_to_async(len)(leveled)
-                widget_desktop.max_z_index = leveled_count - 1
-                await sync_to_async(widget_desktop.save)()
-                for uuid, z_index in leveled.items():
-                    widget = await sync_to_async(
-                        WidgetModel.objects.get
-                    )(uuid=uuid)
-                    serializer = WidgetsPolymorphicSerializer(
-                        widget, data={"z_index": z_index}, partial=True
-                    )
-                    await sync_to_async(
-                        serializer.is_valid
-                    )(raise_exception=True)
-                    await sync_to_async(serializer.save)()
+                    leveled = await sync_to_async(leveler_z_index)(z_indexes)
+                    leveled_count = await sync_to_async(len)(leveled)
+                    widget_desktop.max_z_index = leveled_count - 1
+                    await sync_to_async(widget_desktop.save)()
+                    for uuid, z_index in leveled.items():
+                        widget = await sync_to_async(
+                            WidgetModel.objects.get
+                        )(uuid=uuid)
+                        serializer = WidgetsPolymorphicSerializer(
+                            widget, data={"z_index": z_index}, partial=True
+                        )
+                        await sync_to_async(
+                            serializer.is_valid
+                        )(raise_exception=True)
+                        await sync_to_async(serializer.save)()
 
             widget = await sync_to_async(serializer.save)()
             widget_desktop.max_z_index = widget.z_index
             await sync_to_async(widget_desktop.save)()
 
-            widget = widgetmodel_ptr_to_widget_uuid(configurate_widget(widget))
-            await self.emit('update_widget_answer', data=widget, to=sid)
+            widget_out = widgetmodel_ptr_to_widget_uuid(configurate_widget(widget))
+
+            test = await sync_to_async(model_to_dict)(widget)
+            await sync_to_async(pprint)(test)
+            await self.emit('update_widget_answer', data=widget_out, to=sid)
         except Exception as ex:
             await self.emit('error', data=str(ex), to=sid)
 
