@@ -15,7 +15,7 @@ from .leveler import leveler_z_index
 from .tweets import get_tweets_from_username
 from .utils import (configurate_widget, get_desktop_from_sid,
                     widget_desktop_to_z_index_uuid,
-                    widgetmodel_ptr_to_widget_uuid, get_desktop_from_object)
+                    widgetmodel_ptr_to_widget_uuid, get_desktop_from_object, widget_float_to_int)
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Viverabackend.settings")
 
@@ -101,6 +101,8 @@ class WidgetNamespace(socketio.AsyncNamespace):
     async def on_update_widget(self, sid, data):
         """Update One Widget for current User"""
         try:
+            data = widget_float_to_int(data)
+
             widget = await sync_to_async(
                 WidgetModel.objects.get
             )(uuid=data.get('widget_uuid'))

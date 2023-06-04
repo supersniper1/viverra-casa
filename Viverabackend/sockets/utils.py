@@ -52,3 +52,10 @@ def get_desktop_from_sid(sid):
 
 def get_desktop_from_object(object):
     return object.desktop
+
+
+def widget_float_to_int(object):
+    for k, v in object.items():
+        if type(v) is float:
+            object[k] = int(v)
+    return object
