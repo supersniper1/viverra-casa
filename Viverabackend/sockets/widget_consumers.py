@@ -104,7 +104,7 @@ class WidgetNamespace(socketio.AsyncNamespace):
             widget = await sync_to_async(
                 WidgetModel.objects.get
             )(uuid=data.get('widget_uuid'))
-
+            await sync_to_async(pprint)(data)
             serializer = WidgetsPolymorphicSerializer(
                 widget, data=data, partial=True
             )
@@ -143,8 +143,6 @@ class WidgetNamespace(socketio.AsyncNamespace):
 
             widget_out = widgetmodel_ptr_to_widget_uuid(configurate_widget(widget))
 
-            test = await sync_to_async(model_to_dict)(widget)
-            await sync_to_async(pprint)(test)
             await self.emit('update_widget_answer', data=widget_out, to=sid)
         except Exception as ex:
             await self.emit('error', data=str(ex), to=sid)
