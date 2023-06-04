@@ -8,7 +8,7 @@ export interface IModalSlice {
 
 const initialState: IModalSlice = {
   login: false,
-  add_widget: true,
+  add_widget: false,
   widget_folder: false,
 }
 

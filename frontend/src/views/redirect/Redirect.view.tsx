@@ -18,5 +18,5 @@ export const Redirect: FunctionComponent = () => {
     return <Navigate to="/main" />;
   }
 
-  return <div>anal</div>;
+  return <div>loading...</div>;
 };

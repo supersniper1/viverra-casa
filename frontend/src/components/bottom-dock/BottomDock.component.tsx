@@ -7,31 +7,34 @@ import { IWidgetSlice } from "@/store/slices/widgets/widgets.slice";
 import { socket } from "@/api/ws/socket";
 
 export const BottomDock: FunctionComponent = () => {
-  const folders = useTypedSelector((state) => state.Folders.all_folders);
   const widgets = useTypedSelector((state) => state.Widgets.all_widgets);
   const activeDesktop = useTypedSelector((state) => state.Desktop.active);
 
-  const { WidgetFolderOpen, WidgetsRefreshList, AddWidgetOpen } = useActions();
+  const {
+    WidgetFolderOpen,
+    AddWidgetOpen,
+    ChangeWidgetCollapsedByUUID,
+  } = useActions();
 
   const uncollapse = (widget: IWidgetSlice) => {
     const collapsedWidget = {
       ...widget,
       is_collapsed: false,
     };
-    socket.emit("update_widget", collapsedWidget);
-    socket.emit("get_all_widgets", null);
-    socket.on("get_all_widgets_answer", (message: any) => {
-      WidgetsRefreshList(message);
-    });
+    // socket.emit("update_widget", collapsedWidget);
   };
 
   const openFolder = () => {
     WidgetFolderOpen();
   };
 
+  const collapsedNotes = widgets.filter(
+    (element) => element.is_collapsed === true && element.widget_tag === "note"
+  );
+
   return (
     <div className={s.bottomPanel}>
-      {folders.map(
+      {/* {folders.map(
         (folder) =>
           folder.folder_name === "notes" &&
           folder.desktop === activeDesktop.uuid && (
@@ -39,17 +42,25 @@ export const BottomDock: FunctionComponent = () => {
               <Icons.NotesWidget className={s.NotesCollapsedIcon} />
             </button>
           )
-      )}
-      {widgets.map(
-        (widget) =>
-          widget.desktop === activeDesktop.uuid &&
-          widget.is_collapsed === true &&
-          widget.widget_tag === "note" &&
-          widget.folder === null && (
-            <button key={widget.widget_uuid} onClick={() => uncollapse(widget)}>
-              <Icons.NotesWidget className={s.NotesCollapsedIcon} />
-            </button>
-          )
+      )} */}
+      {collapsedNotes.length > 1 ? (
+        <button onClick={openFolder}>
+          <Icons.NotesWidget className={s.NotesCollapsedIcon} />
+        </button>
+      ) : (
+        widgets.map(
+          (widget) =>
+            widget.desktop === activeDesktop.uuid &&
+            widget.is_collapsed === true &&
+            widget.widget_tag === "note" && (
+              <button
+                key={widget.widget_uuid}
+                onClick={() =>    ChangeWidgetCollapsedByUUID(widget.widget_uuid)}
+              >
+                <Icons.NotesWidget className={s.NotesCollapsedIcon} />
+              </button>
+            )
+        )
       )}
       <button onClick={() => AddWidgetOpen()} className={s.button}>
         <Icons.AddWidget className={s.addWidgetIcon} />
