@@ -2,12 +2,12 @@ import React, { FunctionComponent, useMemo, useState } from "react";
 import { IWidgetSlice } from "@store/slices/widgets/widgets.slice";
 import { socket } from "@api/ws/socket";
 import { useActions } from "@hooks/redux.useActions";
-import s from "./notes.module.scss";
 import { Icons } from "@assets/components/export";
-import cn from "classnames";
 import { useTypedSelector } from "@/hooks/redux.useTypedSelector";
 import { IFolder } from "@/store/slices/folders/folders.slice";
 import { Rnd } from "react-rnd";
+import s from "./notes.module.scss";
+import cn from "classnames";
 
 interface INotes {
   widget: IWidgetSlice;
@@ -23,17 +23,16 @@ export const Notes: FunctionComponent<INotes> = ({ widget, setIsMoveable }) => {
 
   const { SetFolders, UpdateWidget, DeleteWidget, SetZIndex } = useActions();
 
-  useMemo(() => {
+  const updateWidget = () => {
     socket.emit("update_widget", notesWidget);
     SetZIndex()
     UpdateWidget({prev: widget, new: notesWidget})
-  }, [notesWidget]);
+  }
 
-  const deleteWidget = (test: IWidgetSlice) => {
+  const deleteWidget = () => {
     socket.emit("delete_widget", { widget_uuid: notesWidget.widget_uuid });
-    socket.on("delete_widget_answer", (message) => console.log(message))
     widgets.map((element) => console.log(element.widget_uuid))
-    DeleteWidget(test)
+    DeleteWidget(notesWidget)
   };
 
   const collapseWidget = () => {
@@ -80,6 +79,7 @@ export const Notes: FunctionComponent<INotes> = ({ widget, setIsMoveable }) => {
         is_collapsed: true,
       }));
     }
+    updateWidget()
   };
 
   const draggableOnStop = (e: any, data: any) => {
@@ -89,6 +89,7 @@ export const Notes: FunctionComponent<INotes> = ({ widget, setIsMoveable }) => {
       widget_y: data.lastY,
     }));
     setIsMoveable(false)
+    updateWidget()
   };
 
   const changeZIndex = () => {
@@ -96,6 +97,7 @@ export const Notes: FunctionComponent<INotes> = ({ widget, setIsMoveable }) => {
       ...prev,
       z_index: activeDesktop.max_z_index + 1,
     }));
+    updateWidget()
   };
 
   return (
@@ -111,13 +113,14 @@ export const Notes: FunctionComponent<INotes> = ({ widget, setIsMoveable }) => {
           width: notesWidget.widget_size_x,
           height: notesWidget.widget_size_y,
         }}
-        onResizeStop={(e, direction, ref, d) =>
+        onResizeStop={(e, direction, ref, d) => {
           setNotesWidget((prev) => ({
             ...prev,
             widget_size_x: prev.widget_size_x + d.width,
             widget_size_y: prev.widget_size_y + d.height,
           }))
-        }
+          updateWidget()
+        }}
       >
         <div onMouseDown={changeZIndex} className={s.Test}>
           <div className={s.TopPanel}>
@@ -126,7 +129,7 @@ export const Notes: FunctionComponent<INotes> = ({ widget, setIsMoveable }) => {
               <button className={s.CloseButton} onClick={collapseWidget}>
                 <Icons.CollapseWidget />
               </button>
-              <button className={s.CloseButton} onClick={() => deleteWidget(widget)}>
+              <button className={s.CloseButton} onClick={deleteWidget}>
                 <Icons.CloseWidget />
               </button>
             </div>
@@ -138,6 +141,7 @@ export const Notes: FunctionComponent<INotes> = ({ widget, setIsMoveable }) => {
                 ...prev,
                 text: event.target.value,
               }));
+              updateWidget()
             }}
             className={s.Textarea}
           ></textarea>

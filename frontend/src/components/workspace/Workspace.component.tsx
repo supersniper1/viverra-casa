@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useRef, useState } from "react";
+import React, { FunctionComponent, useRef, useState, useEffect } from "react";
 import { useTypedSelector } from "@hooks/redux.useTypedSelector";
 import { Component } from "@components/export.components";
 import {
@@ -18,6 +18,11 @@ export const Workspace: FunctionComponent = () => {
   const transformComponentRef = useRef<ReactZoomPanPinchRef | null>(null);
 
   console.log(widgets);
+
+  useEffect(() => {
+    console.log("rerendered")
+  }, [])
+  
 
   return (
     <div
