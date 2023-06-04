@@ -23,6 +23,7 @@ export const Notes: FunctionComponent<INotes> = ({ widget, setIsMoveable }) => {
     ChangeWidgetSizeByUUID,
     ChangeWidgetZIndexByUUID,
     ChangeWidgetTextByUUID,
+    SetZIndex,
   } = useActions();
 
   // useEffect(() => {
@@ -52,6 +53,7 @@ export const Notes: FunctionComponent<INotes> = ({ widget, setIsMoveable }) => {
       widget_uuid: widget.widget_uuid,
       z_index: activeDesktop.max_z_index + 1,
     });
+    SetZIndex()
   };
 
   return (

@@ -70,7 +70,7 @@ export const Sidebar: FunctionComponent = () => {
           <h1 className={cn(s.Logo, s.CenterItem)}>
             V
           </h1>
-          <div>
+          <div className={s.MinimizedDesktops}>
             {desktops.map((desktop, index) => (
               <div
                 key={desktop.uuid}
@@ -141,7 +141,7 @@ export const Sidebar: FunctionComponent = () => {
                       }}
                     />
                   ) : (
-                    <p>{desktop.desktop_name}</p>
+                    <p className={s.DesktopName}>{desktop.desktop_name}</p>
                   )}
                 </div>
                 <div className={s.DesktopButtons}>
