@@ -4,7 +4,6 @@ import { socket } from "@/api/ws/socket";
 import { useActions } from "@hooks/redux.useActions";
 import s from "./main.module.scss";
 import { IWidgetsSlice } from "@/store/slices/widgets/widgets.slice";
-import { IFolders } from "@/store/slices/folders/folders.slice";
 
 export const Main: FunctionComponent = () => {
   const {
@@ -13,7 +12,6 @@ export const Main: FunctionComponent = () => {
     Login,
     SetDesktops,
     SetActive,
-    SetFolders,
   } = useActions();
 
   useMemo(() => {
@@ -24,7 +22,6 @@ export const Main: FunctionComponent = () => {
         Login();
       });
       socket.emit("get_all_widgets", null);
-      socket.emit("get_all_folders", null);
       socket.emit("get_all_desktops", null);
       socket.on("message", (message: any) => {
         console.log(message);
@@ -36,9 +33,6 @@ export const Main: FunctionComponent = () => {
       });
       socket.on("get_all_widgets_answer", (message: IWidgetsSlice) => {
         WidgetsRefreshList(message);
-      });
-      socket.on("get_all_folders_answer", (message: IFolders) => {
-        SetFolders(message);
       });
       socket.on("get_all_desktops_answer", (message: any) => {
         SetDesktops(message);

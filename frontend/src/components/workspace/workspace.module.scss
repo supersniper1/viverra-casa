@@ -26,6 +26,12 @@
   background: $pink_background_color;
 }
 
+.TransformComponent {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+}
+
 // linear-gradient(
 //     108.73deg,
 //     #e6e6e6 11.8%,

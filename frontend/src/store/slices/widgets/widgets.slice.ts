@@ -1,3 +1,4 @@
+import { socket } from "@/api/ws/socket";
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface IWidgetSlice {
@@ -32,13 +33,37 @@ export const WidgetsSlice = createSlice({
     WidgetsRefreshList: (state, action) => {
       state.all_widgets = action.payload;
     },
-    UpdateWidget: (state, action) => {
-      state.all_widgets.filter((element) => element !== action.payload.prev).push(action.payload.new)
-      console.log("updated")
-    },
     DeleteWidget: (state, action) => {
       state.all_widgets = state.all_widgets.filter((element) => element.widget_uuid !== action.payload.widget_uuid)
       console.log(action.payload.widget_uuid)
+    },
+    ChangeWidgetPositionByUUID: (state, action) => {
+      const widget = state.all_widgets.find(({ widget_uuid }) => widget_uuid === action.payload.widget_uuid);
+      widget.widget_x = action.payload.x;
+      widget.widget_y = action.payload.y;
+      console.log(widget)
+      socket.emit("update_widget", widget);
+    },
+    ChangeWidgetCollapsedByUUID: (state, action) => {
+      const widget = state.all_widgets.find(({ widget_uuid }) => widget_uuid === action.payload);
+      widget.is_collapsed = !widget.is_collapsed;
+      socket.emit("update_widget", widget);
+    },
+    ChangeWidgetZIndexByUUID: (state, action) => {
+      const widget = state.all_widgets.find(({ widget_uuid }) => widget_uuid === action.payload.widget_uuid);
+      widget.z_index = action.payload.z_index;
+      socket.emit("update_widget", widget);
+    },
+    ChangeWidgetSizeByUUID: (state, action) => {
+      const widget = state.all_widgets.find(({ widget_uuid }) => widget_uuid === action.payload.widget_uuid);
+      widget.widget_size_x = widget.widget_size_x + action.payload.widget_size_x;
+      widget.widget_size_y = widget.widget_size_y + action.payload.widget_size_y;
+      socket.emit("update_widget", widget);
+    },
+    ChangeWidgetTextByUUID: (state, action) => {
+      const widget = state.all_widgets.find(({ widget_uuid }) => widget_uuid === action.payload.widget_uuid);
+      widget.text = action.payload.text;
+      socket.emit("update_widget", widget);
     },
   },
 });
