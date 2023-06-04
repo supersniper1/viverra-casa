@@ -36,7 +36,7 @@
 
 .MinimizeSidebar {
   position: fixed;
-  left: 338px;
+  left: calc(20vw - 22px);
   top: calc(50vh - 22px);
   height: 44px;
   width: 44px;
@@ -45,6 +45,8 @@
   justify-content: center;
   align-items: center;
   background: #3A60E8;
+  transition: 0.5s;
+  padding-right: 3px;
 }
 
 .CenterItem {
@@ -63,12 +65,14 @@
   width: 60px;
   padding: 60px 5px;
   opacity: 1;
+  transition: 0.5s;
 }
 
 .Sidebar {
   @include SidebarMixin;
-  width: 360px;
+  width: 20vw;
   padding: 60px 28px;
+  transition: 0.5s;
 }
 
 .Logo {
@@ -106,6 +110,11 @@
   gap: 10px;
   align-items: center;
   padding: 5px;
+  width: 100%;
+}
+.MinimizedDesktops {
+  width: 80%;
+  margin-left: 7px;
 }
 .Colors {
   display: flex;
@@ -130,4 +139,7 @@
 .ActiveDesktop {
   background: #f0f0ff;
   border-radius: 0px 5px 5px 0px;
+}
+.DesktopName {
+  text-overflow: ellipsis;
 }

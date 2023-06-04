@@ -17,13 +17,6 @@ export const Workspace: FunctionComponent = () => {
 
   const transformComponentRef = useRef<ReactZoomPanPinchRef | null>(null);
 
-  console.log(widgets);
-
-  useEffect(() => {
-    console.log("rerendered")
-  }, [])
-  
-
   return (
     <div
       className={cn(
@@ -39,6 +32,10 @@ export const Workspace: FunctionComponent = () => {
         limitToBounds={false}
         initialPositionX={1000}
         initialPositionY={1000}
+        minPositionX={0}
+        maxPositionX={3000}
+        minPositionY={0}
+        maxPositionY={3000}
         disabled={isMoveable}
         ref={transformComponentRef}
       >

@@ -32,6 +32,7 @@ export const AddWidgetModal: FunctionComponent = () => {
     socket.on("get_all_widgets_answer", (message: []) => {
       WidgetsRefreshList(message);
     });
+    AddWidgetClose()
   };
 
   return (
