@@ -77,14 +77,14 @@
   width: 60px;
   padding: 60px 5px;
   opacity: 1;
-  transition: 0.5s;
+  transition: 0.25s;
 }
 
 .Sidebar {
   @include SidebarMixin;
   width: 20vw;
   padding: 60px 28px;
-  transition: 0.5s;
+  transition: 0.25s;
 }
 
 .Logo {

@@ -13,10 +13,13 @@ export const AddWidgetModal: FunctionComponent = () => {
 
   const { AddWidgetClose, WidgetsRefreshList } = useActions();
 
+  // widget_x: -(Math.round(windowSize.current[0]/2) - 700),
+  // widget_y: -(Math.round(windowSize.current[1]/2) + 100),
+
   const notesObj = {
     widget_tag: "note",
-    widget_x: -(Math.round(windowSize.current[0]/2) - 700),
-    widget_y: -(Math.round(windowSize.current[1]/2) + 100),
+    widget_x: (Math.round(windowSize.current[0]/2) - 100),
+    widget_y: (Math.round(windowSize.current[1]/2) - 100),
     widget_size_x: 200,
     widget_size_y: 200,
     z_index: activeDesktop.max_z_index + 1,

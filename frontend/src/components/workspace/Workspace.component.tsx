@@ -26,7 +26,7 @@ export const Workspace: FunctionComponent = () => {
         desktopColor === "pink" && s.ColorPink
       )}
     >
-      <TransformWrapper
+      {/* <TransformWrapper
         minScale={0.3}
         initialScale={1}
         limitToBounds={false}
@@ -43,7 +43,7 @@ export const Workspace: FunctionComponent = () => {
           <TransformComponent
             contentClass={s.TransformComponent}
             wrapperStyle={{ height: "100vh", width: "100vw" }}
-          >
+          > */}
             {widgets.map(
               (widget) =>
                 widget.desktop === activeDesktop.uuid &&
@@ -52,9 +52,9 @@ export const Workspace: FunctionComponent = () => {
                   <Component.Notes key={widget.widget_uuid} widget={widget} setIsMoveable={setIsMoveable} />
                 )
             )}
-          </TransformComponent>
+          {/* </TransformComponent>
         </React.Fragment>
-      </TransformWrapper>
+      </TransformWrapper> */}
     </div>
   );
 };
