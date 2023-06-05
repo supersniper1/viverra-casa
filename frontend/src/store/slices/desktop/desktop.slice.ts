@@ -49,7 +49,8 @@ export const DesktopSlice = createSlice({
       );
     },
     DeleteDesktop: (state, action) => {
-      state.remove_queue = action.payload
+      state.remove_queue = [];
+      state.all_desktops = state.all_desktops.filter((element) => element.uuid !== action.payload);
     },
   },
 });
