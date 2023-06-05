@@ -45,20 +45,32 @@
   justify-content: center;
   align-items: center;
   background: #3A60E8;
-  transition: 0.5s;
-  padding-right: 3px;
+  transition-delay: 0.5s;
+  padding-right: 4px;
+  opacity: 1;
+  pointer-events: all;
+}
+.MinimizeSidebarMinimized {
+  position: fixed;
+  left: calc(20vw - 22px);
+  top: calc(50vh - 22px);
+  height: 44px;
+  width: 44px;
+  border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #3A60E8;
+  padding-right: 4px;
+  opacity: 1;
+  pointer-events: all;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .CenterItem {
-  padding: 13px;
+  padding: 0 13px;
 }
-
-// .Minimized {
-//   @include SidebarMixin;
-//   width: 1px;
-//   opacity: 0;
-//   transition: 1s;
-// }
 
 .Minimized {
   @include SidebarMixin;
@@ -112,9 +124,21 @@
   padding: 5px;
   width: 100%;
 }
+.MinimizedDesktop {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  width: 100%;
+}
 .MinimizedDesktops {
-  width: 80%;
-  margin-left: 7px;
+  // width: 80%;
+  // margin-left: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 .Colors {
   display: flex;
@@ -140,6 +164,20 @@
   background: #f0f0ff;
   border-radius: 0px 5px 5px 0px;
 }
-.DesktopName {
+.OverflowEclipsis {
+  transition: 1s;
   text-overflow: ellipsis;
+}
+.ToastUndo {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+}
+.ToastUndoButton {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  color: #3A60E8;
 }

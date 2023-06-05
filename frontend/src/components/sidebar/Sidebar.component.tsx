@@ -4,7 +4,7 @@ import { Icons } from "@assets/components/export";
 import { useTypedSelector } from "@/hooks/redux.useTypedSelector";
 import { useActions } from "@/hooks/redux.useActions";
 import cn from "classnames";
-import "react-toastify/dist/ReactToastify.css";
+import "./ReactToastify.css";
 import { socket } from "@/api/ws/socket";
 import { IDesktop } from "@/store/slices/desktop/desktop.slice";
 import { IWidgetsSlice } from "@/store/slices/widgets/widgets.slice";
@@ -50,36 +50,32 @@ export const Sidebar: FunctionComponent = () => {
 
   const deleteDesktop = (desktop: IDesktop) => {
     SetQueue(desktop);
-    setTimeout(() => {
-      toast(<Undo onUndo={() => UndoDeleteDesktop(desktop)} />, {
-        onClose: () => {
-          queue.map((element) => {
-            DeleteDesktop([]);
-            socket.emit("delete_desktop", { uuid: element.uuid });
-            getDesktops();
-          });
-        },
-      });
-    }, 2000);
+    toast(<Undo onUndo={() => UndoDeleteDesktop(desktop)} />, {
+      onClose: () => {
+        queue.map((element) => {
+          DeleteDesktop(desktop.uuid);
+          socket.emit("delete_desktop", { uuid: element.uuid });
+          getDesktops();
+        });
+      },
+    });
   };
 
   if (minimized) {
     return (
       <div onClick={() => setMinimized(false)} className={s.Minimized}>
         <div className={s.Top}>
-          <h1 className={cn(s.Logo, s.CenterItem)}>
-            V
-          </h1>
+          <h1 className={cn(s.Logo, s.CenterItem)}>V</h1>
           <div className={s.MinimizedDesktops}>
             {desktops.map((desktop, index) => (
               <div
                 key={desktop.uuid}
                 className={cn(
-                  s.Desktop,
+                  s.MinimizedDesktop,
                   desktop.uuid === activeDesktop.uuid && s.ActiveDesktop
                 )}
               >
-                <div className={s.Desktop}>
+                <div className={s.MinimizedDesktop}>
                   <Icons.Desktop index={index} />
                 </div>
               </div>
@@ -97,6 +93,12 @@ export const Sidebar: FunctionComponent = () => {
             <Icons.Logout />
           </button>
         </div>
+        <button
+          onClick={() => setMinimized(true)}
+          className={s.MinimizeSidebarMinimized}
+        >
+          <Icons.Arrow />
+        </button>
       </div>
     );
   } else {
@@ -141,7 +143,7 @@ export const Sidebar: FunctionComponent = () => {
                       }}
                     />
                   ) : (
-                    <p className={s.DesktopName}>{desktop.desktop_name}</p>
+                    <p className={s.OverflowEclipsis}>{desktop.desktop_name}</p>
                   )}
                 </div>
                 <div className={s.DesktopButtons}>
@@ -170,7 +172,7 @@ export const Sidebar: FunctionComponent = () => {
               }}
             >
               <Icons.CreateDesktop />
-              <p>Create new desktop</p>
+              <p className={s.OverflowEclipsis}>Create new desktop</p>
             </button>
           </div>
         </div>
@@ -191,11 +193,11 @@ export const Sidebar: FunctionComponent = () => {
           </div>
           <button className={s.ProfileManageButton}>
             <Icons.User />
-            <p>Profile</p>
+            <p className={s.OverflowEclipsis}>Profile</p>
           </button>
           <button className={s.ProfileManageButton}>
             <Icons.Theme />
-            <p>Dark Theme</p>
+            <p className={s.OverflowEclipsis}>Dark Theme</p>
           </button>
           <button
             className={s.ProfileManageButton}
@@ -205,17 +207,15 @@ export const Sidebar: FunctionComponent = () => {
             }}
           >
             <Icons.Logout />
-            <p>Log out</p>
+            <p className={s.OverflowEclipsis}>Log out</p>
           </button>
         </div>
-        {!minimized && (
-          <button
-            onClick={() => setMinimized(true)}
-            className={s.MinimizeSidebar}
-          >
-            <Icons.Arrow />
-          </button>
-        )}
+        <button
+          onClick={() => setMinimized(true)}
+          className={s.MinimizeSidebar}
+        >
+          <Icons.Arrow />
+        </button>
         <ToastContainer
           position="top-center"
           autoClose={3000}
@@ -242,8 +242,8 @@ const Undo: FunctionComponent<any> = ({ onUndo, closeToast }) => {
 
   return (
     <div>
-      <h3>
-        Desktop Deleted <button onClick={handleClick}>UNDO</button>
+      <h3 className={s.ToastUndo}>
+        Space deleted <button className={s.ToastUndoButton} onClick={handleClick}>Undo</button>
       </h3>
     </div>
   );
